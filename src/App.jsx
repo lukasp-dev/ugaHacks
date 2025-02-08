@@ -97,6 +97,54 @@ const App = () => {
         fieldId: `sheet-${sheet.id}.profit`,
       });
     }
+    if (Number(sheet.openingIncome) === 0) {
+      errors.push({
+        sheetId: sheet.id,
+        sheetYear: sheet.year,
+        location: 'Opening Income',
+        fieldId: `sheet-${sheet.id}.openingIncome`,
+      });
+    }
+    if (Number(sheet.netIncome) === 0) {
+      errors.push({
+        sheetId: sheet.id,
+        sheetYear: sheet.year,
+        location: 'Net Income',
+        fieldId: `sheet-${sheet.id}.netIncome`,
+      });
+    }
+    if (Number(sheet.interestExpense) === 0) {
+      errors.push({
+        sheetId: sheet.id,
+        sheetYear: sheet.year,
+        location: 'Interest Expense',
+        fieldId: `sheet-${sheet.id}.interestExpense`,
+      });
+    }
+    if (Number(sheet.incomeTaxes) === 0) {
+      errors.push({
+        sheetId: sheet.id,
+        sheetYear: sheet.year,
+        location: 'Income Taxes',
+        fieldId: `sheet-${sheet.id}.incomeTaxes`,
+      });
+    }
+    if (Number(sheet.depreciation) === 0) {
+      errors.push({
+        sheetId: sheet.id,
+        sheetYear: sheet.year,
+        location: 'Depreciation',
+        fieldId: `sheet-${sheet.id}.depreciation`,
+      });
+    }
+    if (Number(sheet.amortization) === 0) {
+      errors.push({
+        sheetId: sheet.id,
+        sheetYear: sheet.year,
+        location: 'Amortization',
+        fieldId: `sheet-${sheet.id}.amortization`,
+      });
+    }
     return errors;
   };
 
@@ -111,7 +159,7 @@ const App = () => {
       tempErrorsRef.current = allErrors;
       setShowModal(true);
     } else {
-      alert('Proceeding to next step.');
+      alert('Proceeding to next page!');
     }
   };
 
@@ -125,7 +173,7 @@ const App = () => {
   // Modal Confirm: proceed.
   const handleModalConfirm = () => {
     setShowModal(false);
-    alert('Proceeding to next step.');
+    alert('Proceeding to next page!');
   };
 
   return (

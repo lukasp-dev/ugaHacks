@@ -42,6 +42,12 @@ export const defaultBalanceSheet = (id, year) => ({
     income: 0,
     revenue: 0,
     profit: 0,
+    operatingIncome: 0,
+    netIncome: 0,
+    interestExpense: 0,
+    incomeTaxes: 0,
+    depreciation: 0,
+    amortization: 0,
   });
   
   export const sumValues = (obj) =>

@@ -190,7 +190,7 @@ const BalanceSheetForm = ({ sheet, onUpdate, validationErrors, onDelete }) => {
             Balance: ${overallBalance.toLocaleString()}
           </div>
         </div>
-        {/* Extra Sections: Income, Revenue, Profit */}
+        {/* Extra Sections: Income, Revenue, Profit, Operating income, Net Income, Interest Expense, Interest Taxes, Depreciation, Amortization*/}
         <div className="extra-sections">
           <div className="extra-section">
             <label>Income:</label>
@@ -217,6 +217,60 @@ const BalanceSheetForm = ({ sheet, onUpdate, validationErrors, onDelete }) => {
               onChange={(newVal) => onUpdate({ ...sheet, profit: newVal })}
               fieldId={`sheet-${sheet.id}.profit`}
               error={hasError(`sheet-${sheet.id}.profit`)}
+            />
+          </div>
+          <div className="extra-section">
+            <label>Operating Income:</label>
+            <EditableField
+              value={sheet.operatingIncome}
+              onChange={(newVal) => onUpdate({ ...sheet, operatingIncome: newVal })}
+              fieldId={`sheet-${sheet.id}.operatingIncome`}
+              error={hasError(`sheet-${sheet.id}.operatingIncome`)}
+            />
+          </div>
+          <div className="extra-section">
+            <label>Net Income:</label>
+            <EditableField
+              value={sheet.netIncome}
+              onChange={(newVal) => onUpdate({ ...sheet, netIncome: newVal })}
+              fieldId={`sheet-${sheet.id}.netIncome`}
+              error={hasError(`sheet-${sheet.id}.netIncome`)}
+            />
+          </div>
+          <div className="extra-section">
+            <label>Interest Expense:</label>
+            <EditableField
+              value={sheet.interestExpense}
+              onChange={(newVal) => onUpdate({ ...sheet, interestExpense: newVal })}
+              fieldId={`sheet-${sheet.id}.interestExpense`}
+              error={hasError(`sheet-${sheet.id}.InterestExpense`)}
+            />
+          </div>
+          <div className="extra-section">
+            <label>Income Taxes:</label>
+            <EditableField
+              value={sheet.incomeTaxes}
+              onChange={(newVal) => onUpdate({ ...sheet, incomeTaxes: newVal })}
+              fieldId={`sheet-${sheet.id}.incomeTaxes`}
+              error={hasError(`sheet-${sheet.id}.incomeTaxes`)}
+            />
+          </div>
+          <div className="extra-section">
+            <label>Depreciation:</label>
+            <EditableField
+              value={sheet.depreciation}
+              onChange={(newVal) => onUpdate({ ...sheet, depreciation: newVal })}
+              fieldId={`sheet-${sheet.id}.depreciation`}
+              error={hasError(`sheet-${sheet.id}.depreciation`)}
+            />
+          </div>
+          <div className="extra-section">
+            <label>Amortization:</label>
+            <EditableField
+              value={sheet.amortization}
+              onChange={(newVal) => onUpdate({ ...sheet, amortization: newVal })}
+              fieldId={`sheet-${sheet.id}.amortization`}
+              error={hasError(`sheet-${sheet.id}.amortization`)}
             />
           </div>
         </div>
