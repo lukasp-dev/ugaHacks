@@ -1,3 +1,4 @@
+/* src/index.css */
 :root {
   --truist-purple: #4B286D;
   --truist-blue-light: #00549C;
@@ -57,7 +58,7 @@ body {
 }
 
 .subheader .logo img {
-  height: 62px;         /* adjust this value as needed */
+  height: 62px;
   width: auto;
 }
 
