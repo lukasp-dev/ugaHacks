@@ -1,68 +1,477 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --truist-purple: #4B286D;
+  --truist-blue-light: #00549C;
+  --truist-teal: #4bc0c0;
+  --truist-pink: rgba(255, 99, 132, 0.6);
+  --truist-blue: rgba(54, 162, 235, 0.6);
+  --truist-border: #e0e0e0;
+  --truist-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
+/* Page Background */
 body {
   margin: 0;
+  padding: 0;
+  background: #f2f2f2;
+  color: #333;
+  font-family: var(--truist-font);
+}
+
+/* --- Top Header --- */
+.header {
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  align-items: center;
+  background-color: var(--truist-purple);
+  color: #fff;
+  padding: 0.3rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.header .disco-emoji {
+  font-size: 1.6rem;
+  margin-right: 0.7rem;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+.header h1 {
+  font-size: 1.4rem;
+  margin: 0;
+  font-weight: bold;
+}
+
+/* --- Subheader --- */
+.subheader {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  border-bottom: 1px solid var(--truist-border);
+  padding: 0.8rem 1.5rem;
+}
+
+.subheader .logo {
+  position: absolute;
+  left: 1.5rem;
+}
+
+.subheader .logo img {
+  height: 62px;         /* adjust this value as needed */
+  width: auto;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 1.5rem;
+}
+
+/* --- Nav Bar Buttons Styling --- */
+.nav-buttons button {
+  background: var(--truist-purple);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 5px;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  font-size: 1rem;
+  transition: background 0.3s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+.nav-buttons button:hover {
+  background: var(--truist-purple);
+  transform: scale(1.05);
+}
+
+/* --- Main Container --- */
+.container {
+  max-width: 900px;
+  margin: 1rem auto;
+  padding: 1rem;
+  background: transparent;
+}
+
+/* --- Balance Sheet Card --- */
+.balance-sheet {
+  background: #fff;
+  border: 1px solid var(--truist-border);
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  padding: 1rem 1.5rem;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.balance-sheet.collapsed {
+  padding: 0.5rem 1.5rem;
+}
+
+.balance-sheet .card-header {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--truist-border);
+}
+
+.balance-sheet .card-header h3 {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.balance-sheet.collapsed .content {
+  display: none;
+}
+
+/* --- Delete Sheet Button --- */
+.delete-sheet-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.delete-sheet-button:hover {
+  color: red;
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 50%;
+}
+
+/* --- Data Display --- */
+.data-display {
+  background: #f9fbfd;
+  padding: 1rem;
+  border: 1px solid var(--truist-border);
+  border-radius: 8px;
+  margin: 1rem 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  position: relative;
+  color: #000;
+}
+
+.section-header .section-total {
+  position: absolute;
+  right: 1rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.assets .section-header {
+  background-color: var(--truist-teal);
+}
+
+.liabilities .section-header {
+  background-color: var(--truist-pink);
+}
+
+.equity .section-header {
+  background-color: var(--truist-blue);
+}
+
+/* --- Dropdown --- */
+.dropdown {
+  border: 1px solid var(--truist-border);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.dropdown-header {
+  background: #f0f0f0;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dropdown.open .dropdown-content {
+  display: block;
+}
+
+.dropdown-title {
+  flex: 1;
+}
+
+.dropdown-total {
+  margin: 0 1rem;
+  font-weight: bold;
+}
+
+.dropdown-toggle {
+  width: 20px;
+  text-align: center;
+}
+
+.dropdown-content {
+  display: none;
+  padding: 0.5rem 1rem;
+  background: #fff;
+}
+
+/* --- Editable Fields --- */
+.editable-field {
+  cursor: pointer;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: inline-block;
+}
+
+.editable-field:hover {
+  background: #e9ecef;
+}
+
+.editable-field.error,
+.editable-input.error {
+  background-color: rgba(255, 0, 0, 0.2);
+}
+
+.editable-input {
+  width: 100px;
+  padding: 0.2rem;
+  border: 1px solid var(--truist-border);
+  border-radius: 4px;
+  text-align: right;
+}
+
+/* --- Add Year Button (Plus Button) --- */
+.add-year-button {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -25px;
+  background: var(--truist-blue-light);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, background 0.2s;
+}
+
+.add-year-button:hover {
+  transform: translateX(-50%) scale(1.1);
+  background: var(--truist-purple);
+}
+
+/* --- Plus Button for Empty Screen --- */
+.empty-add-year-button {
+  background: var(--truist-blue-light);
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, background 0.2s;
+  margin: 1rem auto;
+}
+
+.empty-add-year-button:hover {
+  transform: scale(1.1);
+  background: var(--truist-purple);
+}
+
+/* --- NEXT Button --- */
+.next-button {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  background: #2196F3;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #fff;
+  transition: background 0.2s;
+}
+
+.next-button:hover {
+  background: #1976D2;
+}
+
+/* --- File Drop Area --- */
+.droparea {
+  border: 2px dashed var(--truist-border);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.droparea:hover {
+  background: #e9ecef;
+}
+
+.droparea i {
+  font-size: 2rem;
+  color: var(--truist-purple);
+}
+
+#fileInput {
+  display: none;
+}
+
+/* --- Overall Balance Separator --- */
+.balance-separator {
+  border-top: 2px solid #ccc;
+  margin: 1rem 0;
+  padding-top: 0.5rem;
+  text-align: right;
+}
+
+/* --- Extra Sections --- */
+.extra-sections {
+  margin: 1rem 0;
+}
+
+.extra-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--truist-border);
+  border-radius: 4px;
+  background-color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.extra-section label {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* --- Modal Styling --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
   }
-  a:hover {
-    color: #747bff;
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
-  button {
-    background-color: #f9f9f9;
-  }
+}
+
+.modal h2 {
+  margin-top: 0;
+  font-size: 1.8rem;
+  color: var(--truist-purple);
+}
+
+.modal p {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.modal-errors {
+  background: #f8f8f8;
+  border: 1px solid var(--truist-border);
+  border-radius: 4px;
+  padding: 1rem;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.error-group {
+  margin-bottom: 1rem;
+}
+
+.error-group-header {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.error-row {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.error-row:last-child {
+  border-bottom: none;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.modal-btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-btn.cancel {
+  background: #ccc;
+  color: #333;
+}
+
+.modal-btn.cancel:hover {
+  background: #b3b3b3;
+}
+
+.modal-btn.confirm {
+  background: var(--truist-purple);
+  color: #fff;
+}
+
+.modal-btn.confirm:hover {
+  background: #3a2350;
 }
