@@ -1,6 +1,7 @@
+// src/components/BalanceSheetForm.jsx
 import React, { useState, useRef } from 'react';
 import EditableField from './EditableField';
-import Dropdown from './DropDown';
+import Dropdown from './Dropdown'; // Updated import to match filename
 import { sumValues } from '../utils/balanceSheetUtils';
 
 const BalanceSheetForm = ({

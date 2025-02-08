@@ -1,3 +1,4 @@
+// src/App.jsx
 import React, { useState, useRef } from 'react';
 import {
   BrowserRouter as Router,
@@ -13,11 +14,11 @@ import BalanceSheetForm from './components/BalanceSheetForm';
 import ValidationModal from './components/ValidationModal';
 import { defaultBalanceSheet } from './utils/balanceSheetUtils';
 import TruistLogo from './assets/truist-logo.png';
-import LoginPage from './components/Pages/LoginPage';
+import LoginPage from './components/LoginPage';
 import VisualizationPage from './components/VisualizationPage';
-import SummaryPage from './components/Pages/SummaryPage';
-import LandingScreen from './components/Pages/LandingScreen';
-import GameScreen from './components/Pages/GameScreen';
+import SummaryPage from './components/SummaryPage';
+import LandingScreen from './components/LandingScreen';
+import GameScreen from './components/GameScreen';
 import GameProgress from './components/GameProgress';
 import GamePlay from './components/GamePlay';
 
@@ -65,7 +66,7 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible }) 
     cursor: 'not-allowed'
   };
 
-  // Render nav buttons only when not on the landing page.
+  // Render nav buttons only when in Analysis or Game sections.
   let navContent = null;
   if (isAnalysis) {
     navContent = (
@@ -130,7 +131,6 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible }) 
       >
         {/* Left group: Logo and nav buttons */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          {/* Logo container: fixed width with overflow hidden */}
           <Link to="/home">
             <div
               className="logo"
@@ -150,7 +150,6 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible }) 
               />
             </div>
           </Link>
-          {/* Nav buttons container with left margin to ensure separation */}
           <div style={{ marginLeft: '1rem' }}>
             {navContent}
           </div>
@@ -164,7 +163,6 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible }) 
     </>
   );
 };
-
 
 //
 // MAIN APP COMPONENT
@@ -201,49 +199,6 @@ const App = () => {
   // ------------------------------
   const [visualizationAccessible, setVisualizationAccessible] = useState(false);
   const [summaryAccessible, setSummaryAccessible] = useState(false);
-
-  // ------------------------------
-  // STYLE OBJECTS (used within sheets page, etc.)
-  // ------------------------------
-  const companyNavBtnStyle = {
-    padding: '0.5rem 1rem',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    marginBottom: '0.5rem',
-    width: '100%',
-    textAlign: 'left',
-    backgroundColor: '#F8F9F9',
-    cursor: 'pointer',
-  };
-
-  const activeCompanyNavBtnStyle = {
-    ...companyNavBtnStyle,
-    backgroundColor: '#EBF5FB',
-    borderColor: '#AED6F1',
-    fontWeight: 'bold',
-  };
-
-  const btnStyle = {
-    padding: '0.75rem 1.5rem',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    margin: '0.5rem',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-  };
-
-  const addCompanyBtnStyle = {
-    ...btnStyle,
-    backgroundColor: '#D6EAF8',
-    color: '#154360',
-  };
-
-  const nextBtnStyle = {
-    ...btnStyle,
-    backgroundColor: '#D5F5E3',
-    color: '#1E8449',
-  };
 
   // ------------------------------
   // HANDLER FUNCTIONS
@@ -436,14 +391,7 @@ const App = () => {
         fieldId: `sheet-${sheet.id}.profit`,
       });
     }
-    if (Number(sheet.openingIncome) === 0) {
-      errors.push({
-        sheetId: sheet.id,
-        sheetYear: sheet.year,
-        location: 'Opening Income',
-        fieldId: `sheet-${sheet.id}.openingIncome`,
-      });
-    }
+    // Note: sheet.openingIncome is not defined in defaultBalanceSheet so this check will be skipped.
     if (Number(sheet.netIncome) === 0) {
       errors.push({
         sheetId: sheet.id,
@@ -586,8 +534,8 @@ const App = () => {
                   }}
                   style={
                     company.id === currentCompanyId
-                      ? activeCompanyNavBtnStyle
-                      : companyNavBtnStyle
+                      ? { padding: '0.5rem 1rem', backgroundColor: '#EBF5FB', border: '1px solid #AED6F1', fontWeight: 'bold', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
+                      : { padding: '0.5rem 1rem', backgroundColor: '#F8F9F9', border: '1px solid #ccc', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
                   }
                   autoFocus
                 />
@@ -595,8 +543,8 @@ const App = () => {
                 <button
                   style={
                     company.id === currentCompanyId
-                      ? activeCompanyNavBtnStyle
-                      : companyNavBtnStyle
+                      ? { padding: '0.5rem 1rem', backgroundColor: '#EBF5FB', border: '1px solid #AED6F1', fontWeight: 'bold', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
+                      : { padding: '0.5rem 1rem', backgroundColor: '#F8F9F9', border: '1px solid #ccc', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
                   }
                   onClick={() => setCurrentCompanyId(company.id)}
                   onDoubleClick={() => {
@@ -639,13 +587,13 @@ const App = () => {
               {companies.length < 5 && (
                 <button
                   className="btn-add-company"
-                  style={addCompanyBtnStyle}
+                  style={{ padding: '0.75rem 1.5rem', backgroundColor: '#D6EAF8', color: '#154360', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '1rem', margin: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
                   onClick={handleAddCompany}
                 >
                   ADD COMPANY
                 </button>
               )}
-              <button className="btn-compare-data" style={nextBtnStyle} onClick={handleNextAndCompare}>
+              <button className="btn-compare-data" style={{ padding: '0.75rem 1.5rem', backgroundColor: '#D5F5E3', color: '#1E8449', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '1rem', margin: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} onClick={handleNextAndCompare}>
                 NEXT
               </button>
             </div>
@@ -688,8 +636,6 @@ const App = () => {
                 path="/visualization"
                 element={
                   visualizationAccessible ? (
-                    // Pass a prop (onNext) to VisualizationPage so that when the user clicks NEXT there,
-                    // summary becomes accessible.
                     <VisualizationPage onNext={() => { setSummaryAccessible(true); }} />
                   ) : (
                     <Navigate to="/sheets" replace />
