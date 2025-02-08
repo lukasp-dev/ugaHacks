@@ -476,3 +476,8 @@ body {
 .modal-btn.confirm:hover {
   background: #3a2350;
 }
+
+.add-year-button.previous {
+  top: -25px;
+  bottom: auto;
+}

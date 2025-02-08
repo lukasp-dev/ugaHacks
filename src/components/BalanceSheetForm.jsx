@@ -4,7 +4,13 @@ import EditableField from './EditableField';
 import Dropdown from './DropDown';
 import { sumValues } from '../utils/balanceSheetUtils';
 
-const BalanceSheetForm = ({ sheet, onUpdate, validationErrors, onDelete }) => {
+const BalanceSheetForm = ({
+  sheet,
+  onUpdate,
+  validationErrors,
+  onDelete,
+  onAddPrevious, // New prop for adding a previous year
+}) => {
   const [collapsed, setCollapsed] = useState(false);
   const fileInputRef = useRef();
 
@@ -50,6 +56,17 @@ const BalanceSheetForm = ({ sheet, onUpdate, validationErrors, onDelete }) => {
 
   return (
     <div className={`balance-sheet ${collapsed ? 'collapsed' : ''}`}>
+      {/* Plus button at the top to add a previous year */}
+      <button
+        className="add-year-button previous"
+        onClick={(e) => {
+          e.stopPropagation();
+          onAddPrevious(sheet.year);
+        }}
+        title="Add balance sheet for the previous year"
+      >
+        +
+      </button>
       <div className="card-header" onClick={toggleCollapse}>
         <h3>
           Balance Sheet –{' '}
@@ -190,7 +207,7 @@ const BalanceSheetForm = ({ sheet, onUpdate, validationErrors, onDelete }) => {
             Balance: ${overallBalance.toLocaleString()}
           </div>
         </div>
-        {/* Extra Sections: Income, Revenue, Profit, Operating income, Net Income, Interest Expense, Interest Taxes, Depreciation, Amortization*/}
+        {/* Extra Sections */}
         <div className="extra-sections">
           <div className="extra-section">
             <label>Income:</label>

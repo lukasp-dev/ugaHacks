@@ -24,12 +24,56 @@ const App = () => {
     });
   };
 
-  // Add a new balance sheet.
-  const addSheet = () => {
+  // Add a new balance sheet for the following year.
+  const addNextSheet = () => {
     setSheets((prev) => {
+      if (prev.length >= 10) {
+        alert("Maximum of 10 forms allowed.");
+        return prev;
+      }
       const newId = prev.length ? Math.max(...prev.map((s) => s.id)) + 1 : 1;
-      const newYear =
-        prev.length ? Math.max(...prev.map((s) => s.year)) + 1 : new Date().getFullYear();
+      const newYear = prev.length
+        ? Math.max(...prev.map((s) => s.year)) + 1
+        : new Date().getFullYear();
+      const newSheet = defaultBalanceSheet(newId, newYear);
+      const updated = [...prev, newSheet];
+      updated.sort((a, b) => a.year - b.year);
+      return updated;
+    });
+  };
+
+  // Add a new balance sheet for the previous year relative to the given year.
+  const addPreviousSheet = (year) => {
+    setSheets((prev) => {
+      if (prev.length >= 10) {
+        alert("Maximum of 10 forms allowed.");
+        return prev;
+      }
+      const newYear = year - 1;
+      if (prev.some((s) => s.year === newYear)) {
+        alert("Balance Sheet for year " + newYear + " already exists.");
+        return prev;
+      }
+      const newId = prev.length ? Math.max(...prev.map((s) => s.id)) + 1 : 1;
+      const newSheet = defaultBalanceSheet(newId, newYear);
+      const updated = [...prev, newSheet];
+      updated.sort((a, b) => a.year - b.year);
+      return updated;
+    });
+  };
+
+  // Add a new balance sheet (for an empty state).
+  const addSheet = () => {
+    // This is a fallback in case there are no sheets.
+    setSheets((prev) => {
+      if (prev.length >= 10) {
+        alert("Maximum of 10 forms allowed.");
+        return prev;
+      }
+      const newId = prev.length ? Math.max(...prev.map((s) => s.id)) + 1 : 1;
+      const newYear = prev.length
+        ? Math.max(...prev.map((s) => s.year)) + 1
+        : new Date().getFullYear();
       const newSheet = defaultBalanceSheet(newId, newYear);
       const updated = [...prev, newSheet];
       updated.sort((a, b) => a.year - b.year);
@@ -207,9 +251,10 @@ const App = () => {
                   onUpdate={updateSheet}
                   validationErrors={validationErrors}
                   onDelete={deleteSheet}
+                  onAddPrevious={addPreviousSheet} // Pass the new function
                 />
                 {sheet.id === sheets[sheets.length - 1].id && (
-                  <button className="add-year-button" onClick={addSheet}>
+                  <button className="add-year-button" onClick={addNextSheet}>
                     +
                   </button>
                 )}
