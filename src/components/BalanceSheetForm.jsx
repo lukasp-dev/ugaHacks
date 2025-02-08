@@ -15,10 +15,13 @@ const BalanceSheetForm = ({
   const [collapsed, setCollapsed] = useState(true);
   const fileInputRef = useRef();
 
+  // File handling functions remain intact (accepting all file types)
+  // but no longer perform any CSV/Excel parsing or detection.
   const handleDrop = (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
     console.log('Dropped files:', files);
+    // Parsing/detection code removed.
   };
 
   const handleDragOver = (e) => e.preventDefault();
@@ -31,6 +34,7 @@ const BalanceSheetForm = ({
   const handleFileInputChange = (e) => {
     const files = e.target.files;
     console.log('Selected files:', files);
+    // Parsing/detection code removed.
   };
 
   const updateField = (section, subSection, field, newValue) => {
@@ -44,12 +48,16 @@ const BalanceSheetForm = ({
 
   const toggleCollapse = () => setCollapsed(!collapsed);
 
+  // Totals now sum only the two subsections since each includes its own "Etc." row.
   const totalAssets =
-    sumValues(sheet.assets.current) + sumValues(sheet.assets.nonCurrent);
+    sumValues(sheet.assets.current) +
+    sumValues(sheet.assets.nonCurrent);
   const totalLiabilities =
-    sumValues(sheet.liabilities.current) + sumValues(sheet.liabilities.longTerm);
+    sumValues(sheet.liabilities.current) +
+    sumValues(sheet.liabilities.longTerm);
   const totalEquity =
-    sumValues(sheet.equity.common) + sumValues(sheet.equity.comprehensive);
+    sumValues(sheet.equity.common) +
+    sumValues(sheet.equity.comprehensive);
   const overallBalance = totalAssets - totalLiabilities - totalEquity;
 
   const hasError = (id) =>
