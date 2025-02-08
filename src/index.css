@@ -1,4 +1,3 @@
-/* src/index.css */
 :root {
   --truist-purple: #4B286D;
   --truist-blue-light: #00549C;
@@ -88,6 +87,7 @@ body {
 /* --- Main Container --- */
 .container {
   max-width: 900px;
+  width: 100%;
   margin: 1rem auto;
   padding: 1rem;
   background: transparent;
@@ -257,15 +257,14 @@ body {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  bottom: -25px;
   background: var(--truist-blue-light);
   border: none;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 30px;      
+  height: 30px;      
   cursor: pointer;
   color: #fff;
-  font-size: 2rem;
+  font-size: 1.5rem;    /* reduced from 2rem */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -276,6 +275,16 @@ body {
 .add-year-button:hover {
   transform: translateX(-50%) scale(1.1);
   background: var(--truist-purple);
+}
+
+/* Position the previous button (for adding an earlier year) at the top */
+.add-year-button.previous {
+  top: -15px;  /* Adjusted so the smaller button doesn't overlap the form */
+}
+
+/* Position the next button (for adding a later year) at the bottom */
+.add-year-button.next {
+  bottom: -15px;  /* Adjusted so the smaller button doesn't overlap the form */
 }
 
 /* --- Plus Button for Empty Screen --- */
@@ -477,7 +486,35 @@ body {
   background: #3a2350;
 }
 
-.add-year-button.previous {
-  top: -25px;
-  bottom: auto;
+/* --- Company Header --- */
+.company-header {
+  text-align: center;
+  margin: 1rem 0;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+/* --- Main Layout --- */
+.main-layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* --- Company Navigation Container --- */
+.company-nav-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem;
+  border: 1px solid var(--truist-border);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Company Content --- */
+.company-content {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 1rem;
 }

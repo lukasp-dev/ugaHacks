@@ -9,9 +9,10 @@ const BalanceSheetForm = ({
   onUpdate,
   validationErrors,
   onDelete,
-  onAddPrevious, // New prop for adding a previous year
+  onAddPrevious, // For adding a previous year
+  onAddNext,     // For adding a next year
 }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const fileInputRef = useRef();
 
   const handleDrop = (e) => {
@@ -56,7 +57,7 @@ const BalanceSheetForm = ({
 
   return (
     <div className={`balance-sheet ${collapsed ? 'collapsed' : ''}`}>
-      {/* Plus button at the top to add a previous year */}
+      {/* Previous Year Button at the top */}
       <button
         className="add-year-button previous"
         onClick={(e) => {
@@ -260,7 +261,7 @@ const BalanceSheetForm = ({
               value={sheet.interestExpense}
               onChange={(newVal) => onUpdate({ ...sheet, interestExpense: newVal })}
               fieldId={`sheet-${sheet.id}.interestExpense`}
-              error={hasError(`sheet-${sheet.id}.InterestExpense`)}
+              error={hasError(`sheet-${sheet.id}.interestExpense`)}
             />
           </div>
           <div className="extra-section">
@@ -292,6 +293,17 @@ const BalanceSheetForm = ({
           </div>
         </div>
       </div>
+      {/* Next Year Button at the bottom */}
+      <button
+        className="add-year-button next"
+        onClick={(e) => {
+          e.stopPropagation();
+          onAddNext(sheet.year);
+        }}
+        title="Add balance sheet for the next year"
+      >
+        +
+      </button>
     </div>
   );
 };
