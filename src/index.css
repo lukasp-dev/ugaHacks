@@ -57,7 +57,8 @@ body {
 }
 
 .subheader .logo img {
-  height: 62px;
+  height: 50px;
+  max-height: 100%;
   width: auto;
 }
 

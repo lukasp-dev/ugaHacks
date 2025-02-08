@@ -1,4 +1,3 @@
-// src/components/BalanceSheetForm.jsx
 import React, { useState, useRef } from 'react';
 import EditableField from './EditableField';
 import Dropdown from './DropDown';
@@ -12,16 +11,13 @@ const BalanceSheetForm = ({
   onAddPrevious, // For adding a previous year
   onAddNext,     // For adding a next year
 }) => {
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
   const fileInputRef = useRef();
 
-  // File handling functions remain intact (accepting all file types)
-  // but no longer perform any CSV/Excel parsing or detection.
   const handleDrop = (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
     console.log('Dropped files:', files);
-    // Parsing/detection code removed.
   };
 
   const handleDragOver = (e) => e.preventDefault();
@@ -34,7 +30,6 @@ const BalanceSheetForm = ({
   const handleFileInputChange = (e) => {
     const files = e.target.files;
     console.log('Selected files:', files);
-    // Parsing/detection code removed.
   };
 
   const updateField = (section, subSection, field, newValue) => {
@@ -48,16 +43,12 @@ const BalanceSheetForm = ({
 
   const toggleCollapse = () => setCollapsed(!collapsed);
 
-  // Totals now sum only the two subsections since each includes its own "Etc." row.
   const totalAssets =
-    sumValues(sheet.assets.current) +
-    sumValues(sheet.assets.nonCurrent);
+    sumValues(sheet.assets.current) + sumValues(sheet.assets.nonCurrent);
   const totalLiabilities =
-    sumValues(sheet.liabilities.current) +
-    sumValues(sheet.liabilities.longTerm);
+    sumValues(sheet.liabilities.current) + sumValues(sheet.liabilities.longTerm);
   const totalEquity =
-    sumValues(sheet.equity.common) +
-    sumValues(sheet.equity.comprehensive);
+    sumValues(sheet.equity.common) + sumValues(sheet.equity.comprehensive);
   const overallBalance = totalAssets - totalLiabilities - totalEquity;
 
   const hasError = (id) =>
@@ -65,7 +56,7 @@ const BalanceSheetForm = ({
 
   return (
     <div className={`balance-sheet ${collapsed ? 'collapsed' : ''}`}>
-      {/* Previous Year Button at the top */}
+      {/* Previous Year Button */}
       <button
         className="add-year-button previous"
         onClick={(e) => {
@@ -301,7 +292,7 @@ const BalanceSheetForm = ({
           </div>
         </div>
       </div>
-      {/* Next Year Button at the bottom */}
+      {/* Next Year Button */}
       <button
         className="add-year-button next"
         onClick={(e) => {
