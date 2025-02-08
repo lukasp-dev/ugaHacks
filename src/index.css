@@ -51,9 +51,11 @@ body {
   padding: 0.8rem 1.5rem;
 }
 
+/* Modified .logo styling: removed absolute positioning */
 .subheader .logo {
-  position: absolute;
-  left: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .subheader .logo img {
@@ -265,7 +267,7 @@ body {
   height: 30px;      
   cursor: pointer;
   color: #fff;
-  font-size: 1.5rem;    /* reduced from 2rem */
+  font-size: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -280,12 +282,12 @@ body {
 
 /* Position the previous button (for adding an earlier year) at the top */
 .add-year-button.previous {
-  top: -15px;  /* Adjusted so the smaller button doesn't overlap the form */
+  top: -15px;
 }
 
 /* Position the next button (for adding a later year) at the bottom */
 .add-year-button.next {
-  bottom: -15px;  /* Adjusted so the smaller button doesn't overlap the form */
+  bottom: -15px;
 }
 
 /* --- Plus Button for Empty Screen --- */

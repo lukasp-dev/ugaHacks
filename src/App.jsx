@@ -13,11 +13,11 @@ import BalanceSheetForm from './components/BalanceSheetForm';
 import ValidationModal from './components/ValidationModal';
 import { defaultBalanceSheet } from './utils/balanceSheetUtils';
 import TruistLogo from './assets/truist-logo.png';
-import LoginPage from './components/LoginPage';
+import LoginPage from './components/Pages/LoginPage';
 import VisualizationPage from './components/VisualizationPage';
-import SummaryPage from './components/SummaryPage';
-import LandingScreen from './components/LandingScreen';
-import GameScreen from './components/GameScreen';
+import SummaryPage from './components/Pages/SummaryPage';
+import LandingScreen from './components/Pages/LandingScreen';
+import GameScreen from './components/Pages/GameScreen';
 import GameProgress from './components/GameProgress';
 import GamePlay from './components/GamePlay';
 
