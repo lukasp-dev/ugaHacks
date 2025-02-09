@@ -13,6 +13,7 @@ import {
 import BalanceSheetForm from './components/BalanceSheetForm';
 import ValidationModal from './components/ValidationModal';
 import { defaultBalanceSheet } from './utils/balanceSheetUtils';
+import { getAllBalanceSheets } from './utils/sheetHelpers';
 import TruistLogo from './assets/truist-logo.png';
 import LoginPage from './components/LoginPage';
 import VisualizationPage from './components/VisualizationPage';
@@ -20,12 +21,22 @@ import SummaryPage from './components/SummaryPage';
 import LandingScreen from './components/LandingScreen';
 import GameScreen from './components/GameScreen';
 import GameProgress from './components/GameProgress';
-import GamePlay from './components/GamePlay';
+import GamePlay from './components/GamePlay2';
+import GameEnd from './components/GameEnd';
+
+// Helper function to create a fresh copy of the default companies data.
+const getInitialCompanies = () => [
+  {
+    id: 1,
+    name: "Company A",
+    sheets: [defaultBalanceSheet(1, new Date().getFullYear(), "Company A")],
+  },
+];
 
 //
-// APP LAYOUT (HEADER & SUBHEADER)
+// APP LAYOUT COMPONENT (includes header with Logout button)
 //
-const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible }) => {
+const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible, handleLogout }) => {
   const location = useLocation();
 
   // Determine which section we’re in based on the pathname
@@ -48,7 +59,7 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible }) 
     headerTitle = "Balance Sheet Breakdown";
   }
 
-  // Define button styles for enabled and disabled nav buttons
+  // Define styles for enabled and disabled nav buttons
   const enabledButtonStyle = {
     background: 'var(--truist-purple)',
     color: '#fff',
@@ -106,15 +117,48 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible }) 
       </div>
     );
   }
-  
+
   return (
     <>
-      {/* Top Header */}
-      <header className="header" style={{ display: 'flex', alignItems: 'center', padding: '0.3rem 1.5rem', backgroundColor: 'var(--truist-purple)', color: '#fff' }}>
-        <span className="disco-emoji" role="img" aria-label="Disco Ball" style={{ fontSize: '1.6rem', marginRight: '0.7rem' }}>
-          🪩
-        </span>
-        <h1 style={{ fontSize: '1.4rem', margin: 0, fontWeight: 'bold' }}>{headerTitle}</h1>
+      {/* Top Header with Logout Button */}
+      <header
+        className="header"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0.3rem 1.5rem',
+          backgroundColor: 'var(--truist-purple)',
+          color: '#fff'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span
+            className="disco-emoji"
+            role="img"
+            aria-label="Disco Ball"
+            style={{ fontSize: '1.6rem', marginRight: '0.7rem' }}
+          >
+            🪩
+          </span>
+          <h1 style={{ fontSize: '1.4rem', margin: 0, fontWeight: 'bold' }}>
+            {headerTitle}
+          </h1>
+        </div>
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          style={{
+            background: 'transparent',
+            border: '1px solid #fff',
+            color: '#fff',
+            padding: '0.3rem 0.6rem',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Logout
+        </button>
       </header>
       
       {/* Subheader */}
@@ -129,7 +173,6 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible }) 
           padding: '0.8rem 1.5rem'
         }}
       >
-        {/* Left group: Logo and nav buttons */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Link to="/home">
             <div
@@ -154,7 +197,6 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible }) 
             {navContent}
           </div>
         </div>
-        {/* Right group: Logged-in info */}
         <div style={{ fontWeight: 'bold', marginRight: '1.5rem' }}>
           Logged in as: {currentUser}
         </div>
@@ -177,13 +219,7 @@ const App = () => {
   // ------------------------------
   // COMPANY & BALANCE SHEET STATE
   // ------------------------------
-  const [companies, setCompanies] = useState([
-    {
-      id: 1,
-      name: "Company A",
-      sheets: [defaultBalanceSheet(1, new Date().getFullYear())],
-    },
-  ]);
+  const [companies, setCompanies] = useState(getInitialCompanies());
   const [currentCompanyId, setCurrentCompanyId] = useState(1);
   const [validationErrors, setValidationErrors] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -203,29 +239,64 @@ const App = () => {
   // ------------------------------
   // HANDLER FUNCTIONS
   // ------------------------------
-  // Login and signup handlers
+
+  // Login handler – if no stored data is found, reinitialize to defaults.
   const handleLogin = (username, password) => {
     if (users[username] && users[username] === password) {
+      const storedData = localStorage.getItem(`userData-${username}`);
+      if (storedData) {
+        const parsedData = JSON.parse(storedData);
+        setCompanies(parsedData.companies || getInitialCompanies());
+        setCurrentCompanyId(parsedData.currentCompanyId || 1);
+        setVisualizationAccessible(parsedData.visualizationAccessible || false);
+        setSummaryAccessible(parsedData.summaryAccessible || false);
+      } else {
+        // No stored data for this user; reset state to defaults.
+        setCompanies(getInitialCompanies());
+        setCurrentCompanyId(1);
+        setVisualizationAccessible(false);
+        setSummaryAccessible(false);
+      }
       setCurrentUser(username);
     } else {
       alert("Invalid username or password");
     }
   };
 
+  // Sign-up handler – reset state to default data for the new user.
   const handleSignUp = (username, password) => {
     if (users[username]) {
       alert("Username already exists");
     } else {
       setUsers((prev) => ({ ...prev, [username]: password }));
+      // Initialize default data for the new user.
+      setCompanies(getInitialCompanies());
+      setCurrentCompanyId(1);
+      setVisualizationAccessible(false);
+      setSummaryAccessible(false);
       setCurrentUser(username);
     }
+  };
+
+  // Logout handler: Save current user’s data and clear authentication.
+  const handleLogout = () => {
+    const dataToSave = {
+      companies,
+      currentCompanyId,
+      visualizationAccessible,
+      summaryAccessible,
+      // Additional state (e.g., game progress) can be added here.
+    };
+    localStorage.setItem(`userData-${currentUser}`, JSON.stringify(dataToSave));
+    setCurrentUser(null);
   };
 
   // Get the currently selected company
   const currentCompany = companies.find((company) => company.id === currentCompanyId);
 
-  // --- Balance Sheet Functions ---
+  // --- Balance Sheet Functions (updateSheet, addNextSheet, etc.) ---
   const updateSheet = (updatedSheet) => {
+    // Check for duplicate years in a different sheet
     const duplicateExists = currentCompany.sheets.some(
       (sheet) =>
         sheet.id !== updatedSheet.id && Number(sheet.year) === Number(updatedSheet.year)
@@ -239,14 +310,19 @@ const App = () => {
         prev.filter((errorId) => errorId !== `sheet-${updatedSheet.id}.year`)
       );
     }
+    // If the updated sheet's name (from file upload) differs from the current company name,
+    // update the company name and all its sheets accordingly.
     setCompanies((prev) =>
       prev.map((company) => {
         if (company.id === currentCompanyId) {
+          const newCompanyName = updatedSheet.name;
           const updatedSheets = company.sheets.map((sheet) =>
-            sheet.id === updatedSheet.id ? updatedSheet : sheet
+            sheet.id === updatedSheet.id
+              ? updatedSheet
+              : { ...sheet, name: newCompanyName, identifier: `${newCompanyName}-${sheet.year}` }
           );
           updatedSheets.sort((a, b) => a.year - b.year);
-          return { ...company, sheets: updatedSheets };
+          return { ...company, name: newCompanyName, sheets: updatedSheets };
         }
         return company;
       })
@@ -267,7 +343,7 @@ const App = () => {
           const newYear = company.sheets.length
             ? Math.max(...company.sheets.map((s) => s.year)) + 1
             : new Date().getFullYear();
-          const newSheet = defaultBalanceSheet(newId, newYear);
+          const newSheet = defaultBalanceSheet(newId, newYear, company.name);
           const updatedSheets = [...company.sheets, newSheet];
           updatedSheets.sort((a, b) => a.year - b.year);
           return { ...company, sheets: updatedSheets };
@@ -291,7 +367,31 @@ const App = () => {
     const newId = currentCompany.sheets.length
       ? Math.max(...currentCompany.sheets.map((s) => s.id)) + 1
       : 1;
-    const newSheet = defaultBalanceSheet(newId, newYear);
+    const newSheet = defaultBalanceSheet(newId, newYear, currentCompany.name);
+    const updatedSheets = [...currentCompany.sheets, newSheet];
+    updatedSheets.sort((a, b) => a.year - b.year);
+    setCompanies((prev) =>
+      prev.map((company) =>
+        company.id === currentCompanyId ? { ...company, sheets: updatedSheets } : company
+      )
+    );
+  };
+
+  const addPreviousSheet = (year) => {
+    const newYear = year - 1;
+    const currentCompany = companies.find((company) => company.id === currentCompanyId);
+    if (currentCompany.sheets.length >= 10) {
+      alert("Maximum of 10 balance sheets allowed for this company.");
+      return;
+    }
+    if (currentCompany.sheets.some((s) => s.year === newYear)) {
+      alert("Balance sheet for year " + newYear + " already exists.");
+      return;
+    }
+    const newId = currentCompany.sheets.length
+      ? Math.max(...currentCompany.sheets.map((s) => s.id)) + 1
+      : 1;
+    const newSheet = defaultBalanceSheet(newId, newYear, currentCompany.name);
     const updatedSheets = [...currentCompany.sheets, newSheet];
     updatedSheets.sort((a, b) => a.year - b.year);
     setCompanies((prev) =>
@@ -312,160 +412,21 @@ const App = () => {
     );
   };
 
-  const addPreviousSheet = (year) => {
-    const newYear = year - 1;
-    const currentCompany = companies.find((company) => company.id === currentCompanyId);
-    if (currentCompany.sheets.length >= 10) {
-      alert("Maximum of 10 balance sheets allowed for this company.");
-      return;
-    }
-    if (currentCompany.sheets.some((s) => s.year === newYear)) {
-      alert("Balance sheet for year " + newYear + " already exists.");
-      return;
-    }
-    const newId = currentCompany.sheets.length
-      ? Math.max(...currentCompany.sheets.map((s) => s.id)) + 1
-      : 1;
-    const newSheet = defaultBalanceSheet(newId, newYear);
-    const updatedSheets = [...currentCompany.sheets, newSheet];
-    updatedSheets.sort((a, b) => a.year - b.year);
-    setCompanies((prev) =>
-      prev.map((company) =>
-        company.id === currentCompanyId ? { ...company, sheets: updatedSheets } : company
-      )
-    );
-  };
-
-  // --- Validation ---
-  const findZeroFields = (sheet) => {
-    const errors = [];
-    if (Number(sheet.year) === 0) {
-      errors.push({
-        sheetId: sheet.id,
-        sheetYear: sheet.year,
-        location: 'Year',
-        fieldId: `sheet-${sheet.id}.year`,
-      });
-    }
-    const checkNested = (obj, location) => {
-      Object.keys(obj).forEach((key) => {
-        if (Number(obj[key]) === 0) {
-          errors.push({
-            sheetId: sheet.id,
-            sheetYear: sheet.year,
-            location: `${location} > ${key}`,
-            fieldId: `sheet-${sheet.id}.${location.replace(/ > /g, '.').toLowerCase()}.${key}`,
-          });
-        }
-      });
-    };
-
-    checkNested(sheet.assets.current, 'assets > current');
-    checkNested(sheet.assets.nonCurrent, 'assets > nonCurrent');
-    checkNested(sheet.liabilities.current, 'liabilities > current');
-    checkNested(sheet.liabilities.longTerm, 'liabilities > longTerm');
-    checkNested(sheet.equity.common, 'equity > common');
-    checkNested(sheet.equity.comprehensive, 'equity > comprehensive');
-
-    if (Number(sheet.income) === 0) {
-      errors.push({
-        sheetId: sheet.id,
-        sheetYear: sheet.year,
-        location: 'Income',
-        fieldId: `sheet-${sheet.id}.income`,
-      });
-    }
-    if (Number(sheet.revenue) === 0) {
-      errors.push({
-        sheetId: sheet.id,
-        sheetYear: sheet.year,
-        location: 'Revenue',
-        fieldId: `sheet-${sheet.id}.revenue`,
-      });
-    }
-    if (Number(sheet.profit) === 0) {
-      errors.push({
-        sheetId: sheet.id,
-        sheetYear: sheet.year,
-        location: 'Profit',
-        fieldId: `sheet-${sheet.id}.profit`,
-      });
-    }
-    // Note: sheet.openingIncome is not defined in defaultBalanceSheet so this check will be skipped.
-    if (Number(sheet.netIncome) === 0) {
-      errors.push({
-        sheetId: sheet.id,
-        sheetYear: sheet.year,
-        location: 'Net Income',
-        fieldId: `sheet-${sheet.id}.netIncome`,
-      });
-    }
-    if (Number(sheet.interestExpense) === 0) {
-      errors.push({
-        sheetId: sheet.id,
-        sheetYear: sheet.year,
-        location: 'Interest Expense',
-        fieldId: `sheet-${sheet.id}.interestExpense`,
-      });
-    }
-    if (Number(sheet.incomeTaxes) === 0) {
-      errors.push({
-        sheetId: sheet.id,
-        sheetYear: sheet.year,
-        location: 'Income Taxes',
-        fieldId: `sheet-${sheet.id}.incomeTaxes`,
-      });
-    }
-    if (Number(sheet.depreciation) === 0) {
-      errors.push({
-        sheetId: sheet.id,
-        sheetYear: sheet.year,
-        location: 'Depreciation',
-        fieldId: `sheet-${sheet.id}.depreciation`,
-      });
-    }
-    if (Number(sheet.amortization) === 0) {
-      errors.push({
-        sheetId: sheet.id,
-        sheetYear: sheet.year,
-        location: 'Amortization',
-        fieldId: `sheet-${sheet.id}.amortization`,
-      });
-    }
-    return errors;
-  };
-
-  const validateAndProceed = (action) => {
-    let allErrors = [];
-    currentCompany.sheets.forEach((sheet) => {
-      const errs = findZeroFields(sheet);
-      allErrors = allErrors.concat(errs);
-    });
-    if (allErrors.length > 0) {
-      tempErrorsRef.current = allErrors;
-      setPendingAction(() => action);
-      setShowModal(true);
-    } else {
-      action();
-    }
-  };
-
   const handleAddCompany = () => {
-    validateAndProceed(() => {
-      if (companies.length >= 5) {
-        alert("Maximum of 5 companies allowed.");
-        return;
-      }
-      const newCompanyId = companies.length ? Math.max(...companies.map((c) => c.id)) + 1 : 1;
-      const newCompanyName = "Company " + String.fromCharCode(64 + companies.length + 1);
-      const newCompany = {
-        id: newCompanyId,
-        name: newCompanyName,
-        sheets: [defaultBalanceSheet(1, new Date().getFullYear())],
-      };
-      setCompanies((prev) => [...prev, newCompany]);
-      setCurrentCompanyId(newCompanyId);
-    });
+    if (!currentCompany) return;
+    if (companies.length >= 5) {
+      alert("Maximum of 5 companies allowed.");
+      return;
+    }
+    const newCompanyId = companies.length ? Math.max(...companies.map((c) => c.id)) + 1 : 1;
+    const newCompanyName = "Company " + String.fromCharCode(64 + companies.length + 1);
+    const newCompany = {
+      id: newCompanyId,
+      name: newCompanyName,
+      sheets: [defaultBalanceSheet(1, new Date().getFullYear(), newCompanyName)],
+    };
+    setCompanies((prev) => [...prev, newCompany]);
+    setCurrentCompanyId(newCompanyId);
   };
 
   const handleModalCancel = () => {
@@ -483,27 +444,93 @@ const App = () => {
   };
 
   // ------------------------------
-  // SheetsPage Component (for /sheets route)
+  // SHEETS PAGE COMPONENT (Updated NEXT Button Handler with Validation Modal)
   // ------------------------------
   const SheetsPage = () => {
     const navigate = useNavigate();
 
-    const handleNextAndCompare = () => {
-      validateAndProceed(() => {
-        // Enable navigation to Visualization (unlock Visualization button)
-        setVisualizationAccessible(true);
-        navigate('/visualization');
+    // Helper function to validate each balance sheet for zero values.
+    const getValidationErrors = () => {
+      const errors = [];
+      currentCompany.sheets.forEach((sheet) => {
+        const sheetYear = sheet.year;
+        // Check assets
+        Object.keys(sheet.assets).forEach((category) => {
+          Object.keys(sheet.assets[category]).forEach((field) => {
+            if (Number(sheet.assets[category][field]) === 0) {
+              errors.push({
+                fieldId: `sheet-${sheet.id}.assets.${category}.${field}`,
+                sheetYear,
+                location: `assets > ${category}`
+              });
+            }
+          });
+        });
+        // Check liabilities
+        Object.keys(sheet.liabilities).forEach((category) => {
+          Object.keys(sheet.liabilities[category]).forEach((field) => {
+            if (Number(sheet.liabilities[category][field]) === 0) {
+              errors.push({
+                fieldId: `sheet-${sheet.id}.liabilities.${category}.${field}`,
+                sheetYear,
+                location: `liabilities > ${category}`
+              });
+            }
+          });
+        });
+        // Check equity
+        Object.keys(sheet.equity).forEach((category) => {
+          Object.keys(sheet.equity[category]).forEach((field) => {
+            if (Number(sheet.equity[category][field]) === 0) {
+              errors.push({
+                fieldId: `sheet-${sheet.id}.equity.${category}.${field}`,
+                sheetYear,
+                location: `equity > ${category}`
+              });
+            }
+          });
+        });
+        // Check extra numeric fields
+        ['income', 'revenue', 'profit', 'operatingIncome', 'netIncome', 'interestExpense', 'incomeTaxes', 'depreciation', 'amortization'].forEach((field) => {
+          if (Number(sheet[field]) === 0) {
+            errors.push({
+              fieldId: `sheet-${sheet.id}.${field}`,
+              sheetYear,
+              location: field
+            });
+          }
+        });
       });
+      return errors;
+    };
+
+    const proceedWithNext = () => {
+      console.log("Proceeding to next step");
+      const allBalanceSheets = getAllBalanceSheets(companies);
+      console.log("Flattened balance sheets array:", allBalanceSheets);
+      localStorage.setItem("allBalanceSheets", JSON.stringify(allBalanceSheets));
+      setVisualizationAccessible(true);
+      navigate('/visualization');
+    };
+
+    const handleNextAndCompare = () => {
+      console.log("NEXT button clicked");
+      const errors = getValidationErrors();
+      console.log("Validation errors:", errors);
+      if (errors.length > 0) {
+        tempErrorsRef.current = errors;
+        setPendingAction(() => proceedWithNext);
+        setShowModal(true);
+      } else {
+        proceedWithNext();
+      }
     };
 
     return (
       <>
-        {/* Company Header */}
         <div className="company-header">
           <h2>{currentCompany.name}</h2>
         </div>
-
-        {/* Company Navigation with Editable Company Names */}
         <div
           className="company-nav-container"
           style={{ margin: '0 auto', marginBottom: '1rem', maxWidth: '900px' }}
@@ -516,26 +543,67 @@ const App = () => {
                   onChange={(e) => setEditingCompanyName(e.target.value)}
                   onBlur={() => {
                     setCompanies((prev) =>
-                      prev.map((c) =>
-                        c.id === company.id ? { ...c, name: editingCompanyName } : c
-                      )
+                      prev.map((c) => {
+                        if (c.id === company.id) {
+                          return {
+                            ...c,
+                            name: editingCompanyName,
+                            sheets: c.sheets.map((sheet) => ({
+                              ...sheet,
+                              name: editingCompanyName,
+                              identifier: editingCompanyName
+                                ? `${editingCompanyName}-${sheet.year}`
+                                : sheet.year,
+                            })),
+                          };
+                        }
+                        return c;
+                      })
                     );
                     setEditingCompanyId(null);
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       setCompanies((prev) =>
-                        prev.map((c) =>
-                          c.id === company.id ? { ...c, name: editingCompanyName } : c
-                        )
+                        prev.map((c) => {
+                          if (c.id === company.id) {
+                            return {
+                              ...c,
+                              name: editingCompanyName,
+                              sheets: c.sheets.map((sheet) => ({
+                                ...sheet,
+                                name: editingCompanyName,
+                                identifier: editingCompanyName
+                                  ? `${editingCompanyName}-${sheet.year}`
+                                  : sheet.year,
+                              })),
+                            };
+                          }
+                          return c;
+                        })
                       );
                       setEditingCompanyId(null);
                     }
                   }}
                   style={
                     company.id === currentCompanyId
-                      ? { padding: '0.5rem 1rem', backgroundColor: '#EBF5FB', border: '1px solid #AED6F1', fontWeight: 'bold', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
-                      : { padding: '0.5rem 1rem', backgroundColor: '#F8F9F9', border: '1px solid #ccc', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
+                      ? {
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#EBF5FB',
+                          border: '1px solid #AED6F1',
+                          fontWeight: 'bold',
+                          width: '100%',
+                          textAlign: 'left',
+                          marginBottom: '0.5rem',
+                        }
+                      : {
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#F8F9F9',
+                          border: '1px solid #ccc',
+                          width: '100%',
+                          textAlign: 'left',
+                          marginBottom: '0.5rem',
+                        }
                   }
                   autoFocus
                 />
@@ -543,8 +611,23 @@ const App = () => {
                 <button
                   style={
                     company.id === currentCompanyId
-                      ? { padding: '0.5rem 1rem', backgroundColor: '#EBF5FB', border: '1px solid #AED6F1', fontWeight: 'bold', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
-                      : { padding: '0.5rem 1rem', backgroundColor: '#F8F9F9', border: '1px solid #ccc', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
+                      ? {
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#EBF5FB',
+                          border: '1px solid #AED6F1',
+                          fontWeight: 'bold',
+                          width: '100%',
+                          textAlign: 'left',
+                          marginBottom: '0.5rem',
+                        }
+                      : {
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#F8F9F9',
+                          border: '1px solid #ccc',
+                          width: '100%',
+                          textAlign: 'left',
+                          marginBottom: '0.5rem',
+                        }
                   }
                   onClick={() => setCurrentCompanyId(company.id)}
                   onDoubleClick={() => {
@@ -558,8 +641,6 @@ const App = () => {
             </div>
           ))}
         </div>
-
-        {/* Company Content */}
         <section className="company-content">
           <div className="container">
             {currentCompany.sheets.length > 0 ? (
@@ -569,7 +650,7 @@ const App = () => {
                   sheet={sheet}
                   onUpdate={updateSheet}
                   validationErrors={validationErrors}
-                  onDelete={deleteSheet}
+                  onDelete={() => deleteSheet(sheet.id)}
                   onAddPrevious={addPreviousSheet}
                   onAddNext={addNextSheetFor}
                 />
@@ -581,25 +662,46 @@ const App = () => {
                 </button>
               </div>
             )}
-
-            {/* Bottom Buttons */}
             <div style={{ textAlign: 'center', marginTop: '3rem' }}>
               {companies.length < 5 && (
                 <button
                   className="btn-add-company"
-                  style={{ padding: '0.75rem 1.5rem', backgroundColor: '#D6EAF8', color: '#154360', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '1rem', margin: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    backgroundColor: '#D6EAF8',
+                    color: '#154360',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    margin: '0.5rem',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  }}
                   onClick={handleAddCompany}
                 >
                   ADD COMPANY
                 </button>
               )}
-              <button className="btn-compare-data" style={{ padding: '0.75rem 1.5rem', backgroundColor: '#D5F5E3', color: '#1E8449', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '1rem', margin: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} onClick={handleNextAndCompare}>
+              <button
+                className="btn-compare-data"
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  backgroundColor: '#D5F5E3',
+                  color: '#1E8449',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  margin: '0.5rem',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                }}
+                onClick={handleNextAndCompare}
+              >
                 NEXT
               </button>
             </div>
           </div>
         </section>
-
         {showModal && (
           <ValidationModal
             errors={tempErrorsRef.current}
@@ -612,57 +714,66 @@ const App = () => {
   };
 
   // ------------------------------
-  // MAIN RENDER
+  // MAIN RENDER (Always wrapped in <Router>)
   // ------------------------------
   return (
-    <>
-      {!currentUser ? (
-        <LoginPage onLogin={handleLogin} onSignUp={handleSignUp} />
-      ) : (
-        <Router>
-          <Routes>
+    <Router>
+      <Routes>
+        {/* When not logged in, render the LoginPage and redirect all paths to "/login" */}
+        {!currentUser ? (
+          <>
             <Route
+              path="/login"
+              element={<LoginPage onLogin={handleLogin} onSignUp={handleSignUp} />}
+            />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </>
+        ) : (
+          // When logged in, render the protected routes inside the AppLayout.
+          <Route
+            element={
+              <AppLayout
+                currentUser={currentUser}
+                visualizationAccessible={visualizationAccessible}
+                summaryAccessible={summaryAccessible}
+                handleLogout={handleLogout}
+              />
+            }
+          >
+            <Route path="/home" element={<LandingScreen />} />
+            <Route path="/sheets" element={<SheetsPage />} />
+            <Route
+              path="/visualization"
               element={
-                <AppLayout
-                  currentUser={currentUser}
-                  visualizationAccessible={visualizationAccessible}
-                  summaryAccessible={summaryAccessible}
-                />
+                visualizationAccessible ? (
+                  <VisualizationPage onNext={() => {
+                    setSummaryAccessible(true);
+                  }} />
+                ) : (
+                  <Navigate to="/sheets" replace />
+                )
               }
-            >
-              <Route path="/home" element={<LandingScreen />} />
-              <Route path="/sheets" element={<SheetsPage />} />
-              <Route
-                path="/visualization"
-                element={
-                  visualizationAccessible ? (
-                    <VisualizationPage onNext={() => { setSummaryAccessible(true); }} />
-                  ) : (
-                    <Navigate to="/sheets" replace />
-                  )
-                }
-              />
-              <Route
-                path="/summary"
-                element={
-                  summaryAccessible ? (
-                    <SummaryPage />
-                  ) : (
-                    <Navigate to="/sheets" replace />
-                  )
-                }
-              />
-              <Route path="/game/*" element={<GameScreen />}>
-                <Route path="progress" element={<GameProgress />} />
-                <Route path="play" element={<GamePlay />} />
-                <Route index element={<GamePlay />} />
-              </Route>
-              <Route path="/" element={<Navigate to="/home" replace />} />
+            />
+            <Route
+              path="/summary"
+              element={
+                summaryAccessible ? (
+                  <SummaryPage />
+                ) : (
+                  <Navigate to="/sheets" replace />
+                )
+              }
+            />
+            <Route path="/game/*" element={<GameScreen />}>
+              <Route path="progress" element={<GameProgress />} />
+              <Route path="play" element={<GamePlay />} />
+              <Route index element={<GamePlay />} />
             </Route>
-          </Routes>
-        </Router>
-      )}
-    </>
+            <Route path="*" element={<Navigate to="/home" replace />} />
+          </Route>
+        )}
+      </Routes>
+    </Router>
   );
 };
 

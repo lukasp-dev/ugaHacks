@@ -1,7 +1,8 @@
 // src/components/BalanceSheetForm.jsx
 import React, { useState, useRef } from 'react';
+import merge from 'lodash.merge';
 import EditableField from './EditableField';
-import Dropdown from './Dropdown'; // Updated import to match filename
+import Dropdown from './Dropdown';
 import { sumValues } from '../utils/balanceSheetUtils';
 
 const BalanceSheetForm = ({
@@ -9,13 +10,13 @@ const BalanceSheetForm = ({
   onUpdate,
   validationErrors,
   onDelete,
-  onAddPrevious, // For adding a previous year
-  onAddNext,     // For adding a next year
+  onAddPrevious,
+  onAddNext,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
   const fileInputRef = useRef();
 
-  // Handles file drops from drag & drop
+  // File upload and drag-and-drop handlers:
   const handleDrop = async (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
@@ -25,14 +26,15 @@ const BalanceSheetForm = ({
     }
   };
 
-  const handleDragOver = (e) => e.preventDefault();
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
 
   const handleDropAreaClick = (e) => {
     e.stopPropagation();
     fileInputRef.current.click();
   };
 
-  // Updated file input handler: Uploads the file and then triggers backend analysis.
   const handleFileInputChange = async (e) => {
     const files = e.target.files;
     console.log('Selected files:', files);
@@ -41,13 +43,12 @@ const BalanceSheetForm = ({
     }
   };
 
-  // This function handles the file upload and then calls the analysis endpoint.
   const handleFileUpload = async (file) => {
     try {
       const formData = new FormData();
       formData.append("file", file);
 
-      // Step 1: Upload the file to your backend upload endpoint.
+      // Step 1: Upload the file (adjust the URL as needed)
       const uploadResponse = await fetch("http://localhost:8080/api/upload", {
         method: "POST",
         body: formData,
@@ -60,25 +61,21 @@ const BalanceSheetForm = ({
         return;
       }
 
-      // Step 2: Trigger analysis on the uploaded file by sending its URL to your analysis endpoint.
+      // Step 2: Analyze the file using its URL
       const analysisResponse = await fetch("http://localhost:8080/api/analyzeFileUrl", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fileUrl: uploadData.fileUrl }),
       });
       const analysisData = await analysisResponse.json();
       console.log("Analysis result:", analysisData);
 
-      // Step 3: If analysis returns balanceSheetData, update the current sheet.
+      // Step 3: Merge the returned data into the current sheet
       if (analysisData && analysisData.balanceSheetData) {
-        // Merge the parsed data with the current sheet.
-        // Note: This assumes the returned structure matches your defaultBalanceSheet structure.
-        const updatedSheet = {
-          ...sheet,
-          ...analysisData.balanceSheetData,
-        };
+        const newData = analysisData.balanceSheetData;
+        const updatedSheet = merge({}, sheet, newData);
+        updatedSheet.identifier = `${updatedSheet.name}-${updatedSheet.year}`;
+        console.log("Merged balance sheet object:", updatedSheet);
         onUpdate(updatedSheet);
       }
     } catch (err) {
@@ -86,6 +83,7 @@ const BalanceSheetForm = ({
     }
   };
 
+  // Update a specific field in the balance sheet
   const updateField = (section, subSection, field, newValue) => {
     const updatedSheet = { ...sheet };
     updatedSheet[section][subSection] = {
@@ -97,6 +95,7 @@ const BalanceSheetForm = ({
 
   const toggleCollapse = () => setCollapsed(!collapsed);
 
+  // Calculate totals for assets, liabilities, and equity
   const totalAssets =
     sumValues(sheet.assets.current) + sumValues(sheet.assets.nonCurrent);
   const totalLiabilities =
@@ -105,32 +104,36 @@ const BalanceSheetForm = ({
     sumValues(sheet.equity.common) + sumValues(sheet.equity.comprehensive);
   const overallBalance = totalAssets - totalLiabilities - totalEquity;
 
+  // Validate the accounting equation
+  const isEquationValid = totalAssets === (totalLiabilities + totalEquity);
+
   const hasError = (id) =>
     validationErrors && validationErrors.includes(id);
 
   return (
     <div className={`balance-sheet ${collapsed ? 'collapsed' : ''}`}>
-      {/* Previous Year Button */}
-      <button
-        className="add-year-button previous"
-        onClick={(e) => {
-          e.stopPropagation();
-          onAddPrevious(sheet.year);
-        }}
-        title="Add balance sheet for the previous year"
-      >
-        +
-      </button>
+      {/* Editable Field for Company Name */}
+      <div className="company-name">
+        <label>Company Name:</label>
+        <EditableField
+          value={sheet.name}
+          onChange={(newName) => {
+            const updatedSheet = { 
+              ...sheet, 
+              name: newName, 
+              identifier: `${newName}-${sheet.year}` 
+            };
+            console.log("Updated company name:", updatedSheet);
+            onUpdate(updatedSheet);
+          }}
+          inputType="text"
+          fieldId={`sheet-${sheet.id}.name`}
+        />
+      </div>
+      {/* Card Header showing the year */}
       <div className="card-header" onClick={toggleCollapse}>
         <h3>
-          Balance Sheet –{' '}
-          <EditableField
-            value={sheet.year}
-            isYear
-            onChange={(newYear) => onUpdate({ ...sheet, year: newYear })}
-            fieldId={`sheet-${sheet.id}.year`}
-            error={hasError(`sheet-${sheet.id}.year`)}
-          />
+          Balance Sheet – {sheet.year}
         </h3>
         <i className={`fa ${collapsed ? 'fa-chevron-down' : 'fa-chevron-up'}`} />
       </div>
@@ -144,7 +147,7 @@ const BalanceSheetForm = ({
       >
         <i className="fa fa-trash" />
       </button>
-      <div className="content">
+      <div className="content" onClick={(e) => e.stopPropagation()}>
         <div
           className="droparea"
           onDrop={handleDrop}
@@ -256,10 +259,22 @@ const BalanceSheetForm = ({
             />
           </div>
         </div>
+        {/* Overall Balance & Equation Warning */}
         <div className="balance-separator">
-          <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+          <div
+            style={{
+              fontSize: '1.1rem',
+              fontWeight: 'bold',
+              color: isEquationValid ? 'inherit' : 'red',
+            }}
+          >
             Balance: ${overallBalance.toLocaleString()}
           </div>
+          {!isEquationValid && (
+            <div className="balance-warning" style={{ color: 'red', fontWeight: 'bold' }}>
+              Warning: The balance sheet equation is not satisfied (Assets ≠ Liabilities + Equity)
+            </div>
+          )}
         </div>
         {/* Extra Sections */}
         <div className="extra-sections">
@@ -269,6 +284,7 @@ const BalanceSheetForm = ({
               value={sheet.income}
               onChange={(newVal) => onUpdate({ ...sheet, income: newVal })}
               fieldId={`sheet-${sheet.id}.income`}
+              inputType="number"
               error={hasError(`sheet-${sheet.id}.income`)}
             />
           </div>
@@ -278,6 +294,7 @@ const BalanceSheetForm = ({
               value={sheet.revenue}
               onChange={(newVal) => onUpdate({ ...sheet, revenue: newVal })}
               fieldId={`sheet-${sheet.id}.revenue`}
+              inputType="number"
               error={hasError(`sheet-${sheet.id}.revenue`)}
             />
           </div>
@@ -287,6 +304,7 @@ const BalanceSheetForm = ({
               value={sheet.profit}
               onChange={(newVal) => onUpdate({ ...sheet, profit: newVal })}
               fieldId={`sheet-${sheet.id}.profit`}
+              inputType="number"
               error={hasError(`sheet-${sheet.id}.profit`)}
             />
           </div>
@@ -296,6 +314,7 @@ const BalanceSheetForm = ({
               value={sheet.operatingIncome}
               onChange={(newVal) => onUpdate({ ...sheet, operatingIncome: newVal })}
               fieldId={`sheet-${sheet.id}.operatingIncome`}
+              inputType="number"
               error={hasError(`sheet-${sheet.id}.operatingIncome`)}
             />
           </div>
@@ -305,6 +324,7 @@ const BalanceSheetForm = ({
               value={sheet.netIncome}
               onChange={(newVal) => onUpdate({ ...sheet, netIncome: newVal })}
               fieldId={`sheet-${sheet.id}.netIncome`}
+              inputType="number"
               error={hasError(`sheet-${sheet.id}.netIncome`)}
             />
           </div>
@@ -314,6 +334,7 @@ const BalanceSheetForm = ({
               value={sheet.interestExpense}
               onChange={(newVal) => onUpdate({ ...sheet, interestExpense: newVal })}
               fieldId={`sheet-${sheet.id}.interestExpense`}
+              inputType="number"
               error={hasError(`sheet-${sheet.id}.interestExpense`)}
             />
           </div>
@@ -323,6 +344,7 @@ const BalanceSheetForm = ({
               value={sheet.incomeTaxes}
               onChange={(newVal) => onUpdate({ ...sheet, incomeTaxes: newVal })}
               fieldId={`sheet-${sheet.id}.incomeTaxes`}
+              inputType="number"
               error={hasError(`sheet-${sheet.id}.incomeTaxes`)}
             />
           </div>
@@ -332,6 +354,7 @@ const BalanceSheetForm = ({
               value={sheet.depreciation}
               onChange={(newVal) => onUpdate({ ...sheet, depreciation: newVal })}
               fieldId={`sheet-${sheet.id}.depreciation`}
+              inputType="number"
               error={hasError(`sheet-${sheet.id}.depreciation`)}
             />
           </div>
@@ -341,6 +364,7 @@ const BalanceSheetForm = ({
               value={sheet.amortization}
               onChange={(newVal) => onUpdate({ ...sheet, amortization: newVal })}
               fieldId={`sheet-${sheet.id}.amortization`}
+              inputType="number"
               error={hasError(`sheet-${sheet.id}.amortization`)}
             />
           </div>
