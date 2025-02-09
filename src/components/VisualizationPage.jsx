@@ -12,7 +12,7 @@ const colors = [
 ];
 
 // sample data
-const companies = [
+const initialCompanies = [
   {
     name: "Company A",
     balanceSheet: {
@@ -163,6 +163,7 @@ const formatLabel = (label) => {
 const VisualizationPage = () => {
   const dispatch = useDispatch();
   const financialData = useSelector((state) => state.financialData?.data ?? []);
+  const [companies, setCompanies] = useState(initialCompanies);
 
   const balanceCompRef = useRef(null);
   const incomeCompRef = useRef(null);
@@ -188,40 +189,56 @@ const VisualizationPage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const allBalanceSheets = localStorage.getItem("allBalanceSheets");
-      if (allBalanceSheets) {
-        const parsedData = JSON.parse(allBalanceSheets);
+      const storedData = localStorage.getItem("allBalanceSheets");
+      if (storedData) {
+        const parsedData = JSON.parse(storedData);
         console.log("Parsed Data from localStorage:", parsedData);
-        
+
         try {
           const processedData = await processFinancialData(parsedData);
           console.log("Processed Financial Data:", processedData);
           dispatch(setFinancialData(processedData));
+          setCompanies(processedData);
+          console.log("Companies state updated:", processedData);
         } catch (error) {
           console.error("Error processing financial data:", error);
         }
       } else {
-        console.log("No data found in localStorage for 'all-balance-sheets'");
+        console.log("No data found in localStorage for 'processedData'");
       }
     };
 
     fetchData();
   }, [dispatch]);
 
-  useEffect(() => {
-    console.log("Financial Data from Redux has changed:", financialData);
-  }, [financialData]);
-  
 
   useEffect(() => {
     setFinancialRatios(calculateFinancialRatios(companies));
-  }, []);
+  }, [companies]);
 
   useEffect(() => {
     setEbitdaData(calculateEbitda(companies));
-  }, []);
+  }, [companies]);
 
   useEffect(() => {
+    setSelectedCompany1(companies[0]);
+  }, [companies])
+
+  useEffect(() => {
+    setSelectedCompany2(companies[0]);
+  }, [companies])
+
+  useEffect(() => {
+    setSelectedCompany(companies[0]);
+  }, [companies])
+
+  useEffect(() => {
+    setSelectedCompany3(companies[0]);
+  }, [companies])
+
+
+  useEffect(() => {
+    if (!companies.length) return;
     if (balanceCompRef.current) balanceCompRef.current.destroy();
 
     const ctxBalance = document.getElementById("balanceComparisonChart").getContext("2d");
@@ -233,7 +250,7 @@ const VisualizationPage = () => {
       },
       options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
-  }, [balanceCategory]);
+  }, [companies, balanceCategory]);
 
   useEffect(() => {
     if (incomeCompRef.current) incomeCompRef.current.destroy();
@@ -247,7 +264,7 @@ const VisualizationPage = () => {
       },
       options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
-  }, [incomeCategory]);
+  }, [companies, incomeCategory]);
 
   useEffect(() => {
     if (balanceFinRef.current) balanceFinRef.current.destroy();
@@ -261,7 +278,7 @@ const VisualizationPage = () => {
       },
       options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
-  }, [selectedCompany1]);
+  }, [companies, selectedCompany1]);
 
   useEffect(() => {
     if (incomeFinRef.current) incomeFinRef.current.destroy();
@@ -275,7 +292,7 @@ const VisualizationPage = () => {
       },
       options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
-  }, [selectedCompany2]);
+  }, [companies, selectedCompany2]);
 
   useEffect(() => {
     if (balanceCompRefL.current) balanceCompRefL.current.destroy();
@@ -289,7 +306,7 @@ const VisualizationPage = () => {
       },
       options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
-  }, [balanceCategoryL]);
+  }, [companies, balanceCategoryL]);
 
   useEffect(() => {
     if (incomeCompRefL.current) incomeCompRefL.current.destroy();
@@ -303,7 +320,7 @@ const VisualizationPage = () => {
       },
       options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
-  }, [incomeCategoryL]);
+  }, [companies, incomeCategoryL]);
 
   useEffect(() => {
     if (!canvasRef.current || financialRatios.length === 0) return;
@@ -331,7 +348,7 @@ const VisualizationPage = () => {
       },
       options: { responsive: true, scales: { y: { beginAtZero: false } } }
     });
-  }, [selectedCompany, financialRatios]);
+  }, [companies, selectedCompany, financialRatios]);
 
   useEffect(() => {
     if (!ebitdaCanvasRef.current || ebitdaData.length === 0) return;
@@ -357,7 +374,7 @@ const VisualizationPage = () => {
       },
       options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
-  }, [selectedCompany3, ebitdaData]);
+  }, [companies, selectedCompany3, ebitdaData]);
 
   // financialData에 접근하여 필요한 작업 수행
   console.log("Financial Data from Redux:", financialData);
