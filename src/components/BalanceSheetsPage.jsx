@@ -1,38 +1,15 @@
 // src/components/BalanceSheetsPage.jsx
 import React, { useState } from 'react';
 import BalanceSheetForm from './BalanceSheetForm';
+import { defaultBalanceSheet } from '../utils/balanceSheetUtils';
 
 const BalanceSheetsPage = ({ onNext }) => {
-  // Dummy initial balance sheet data
-  const [sheet, setSheet] = useState({
-    id: 1,
-    year: 2020,
-    assets: {
-      current: { Cash: 1000, 'Accounts Receivable': 500 },
-      nonCurrent: { 'Property, Plant & Equipment': 3000 },
-    },
-    liabilities: {
-      current: { 'Accounts Payable': 200 },
-      longTerm: { 'Long-Term Debt': 1000 },
-    },
-    equity: {
-      common: { 'Common Stock': 500, 'Retained Earnings': 250 },
-      comprehensive: { 'Other': 0 },
-    },
-    income: 0,
-    revenue: 0,
-    profit: 0,
-    operatingIncome: 0,
-    netIncome: 0,
-    interestExpense: 0,
-    incomeTaxes: 0,
-    depreciation: 0,
-    amortization: 0,
-  });
-
+  // Initialize with our defaultBalanceSheet. We pass an empty string for the company name.
+  const [sheet, setSheet] = useState(defaultBalanceSheet(1, new Date().getFullYear(), ''));
   const [validationErrors, setValidationErrors] = useState([]);
 
   const handleUpdate = (updatedSheet) => {
+    console.log("Updating sheet with:", updatedSheet);
     setSheet(updatedSheet);
   };
 

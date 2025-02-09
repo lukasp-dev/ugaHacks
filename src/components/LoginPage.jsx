@@ -1,11 +1,13 @@
 // src/components/LoginPage.jsx
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = ({ onLogin, onSignUp }) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -15,8 +17,12 @@ const LoginPage = ({ onLogin, onSignUp }) => {
         return;
       }
       onSignUp(username, password);
+      // Redirect to "/home" after sign-up.
+      navigate('/home');
     } else {
       onLogin(username, password);
+      // Redirect to "/home" after login.
+      navigate('/home');
     }
   };
 
