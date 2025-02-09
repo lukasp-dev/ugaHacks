@@ -1,4 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setFinancialData } from "../store/financialDataSlice";
+
 import Chart from "chart.js/auto";
 
 // colors
@@ -157,6 +160,9 @@ const formatLabel = (label) => {
 };
 
 const VisualizationPage = () => {
+  const dispatch = useDispatch();
+  const financialData = useSelector((state) => state.financialData.data);
+
   const balanceCompRef = useRef(null);
   const incomeCompRef = useRef(null);
   const balanceFinRef = useRef(null);
@@ -179,6 +185,15 @@ const VisualizationPage = () => {
   const [financialRatios, setFinancialRatios] = useState([]);
   const [ebitdaData, setEbitdaData] = useState([]);
 
+  useEffect(() => {
+    // localStorage에서 데이터 가져오기
+    const allBalanceSheets = localStorage.getItem("all-balance-sheets");
+    if (allBalanceSheets) {
+      const parsedData = JSON.parse(allBalanceSheets);
+      // 리덕스 스토어 업데이트
+      dispatch(setFinancialData(parsedData));
+    }
+  }, [dispatch]);
 
   useEffect(() => {
     setFinancialRatios(calculateFinancialRatios(companies));
@@ -325,6 +340,9 @@ const VisualizationPage = () => {
       options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
   }, [selectedCompany3, ebitdaData]);
+
+  // financialData에 접근하여 필요한 작업 수행
+  console.log("Financial Data from Redux:", financialData);
 
   return (
     <div style={{ padding: "1rem" }}>
