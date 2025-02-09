@@ -1,50 +1,23 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import styles from './LandingScreen.module.css';
 
 const LandingScreen = () => {
   return (
-    <div
-      style={{
-        height: 'calc(100vh - 121px)', // account for header/subheader if needed
-        overflow: 'hidden',           // prevent scrolling
-        marginTop: '-60px',           // shift content upward
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',     // center content vertically
-        alignItems: 'center',         // center content horizontally
-        textAlign: 'center',
-      }}
-    >
-      <h2 style={{ marginBottom: '2rem', color: '#4B286D' }}>Welcome</h2>
-      <div style={{ display: 'flex', gap: '1.5rem' }}>
-        <Link to="/game/progress" style={{ textDecoration: 'none' }}>
-          <button
-            style={{
-              padding: '1rem 2rem',
-              fontSize: '1.2rem',
-              background: '#00549C',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer'
-            }}
-          >
-            GAME
+    <div className={styles.container}>
+      <h2 className={styles.title}> Understanding Financial Statements </h2>
+      <p className={styles.description} style={{ whiteSpace: 'nowrap', textAlign: 'center', display: 'flex', justifyContent: 'center' }}>
+        Explore interactive visualizations and engaging games to enhance your financial literacy 💨
+      </p>
+      <div className={styles.buttonGroup} style={{ marginTop: '2rem' }}>
+        <Link to="/game/progress">
+          <button className={styles.gameButton}>
+            🎮 Learning Game
           </button>
         </Link>
-        <Link to="/sheets" style={{ textDecoration: 'none' }}>
-          <button
-            style={{
-              padding: '1rem 2rem',
-              fontSize: '1.2rem',
-              background: '#4B286D',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer'
-            }}
-          >
-            ANALYSIS
+        <Link to="/sheets">
+          <button className={styles.analysisButton}>
+            📊 Graph Analysis
           </button>
         </Link>
       </div>
