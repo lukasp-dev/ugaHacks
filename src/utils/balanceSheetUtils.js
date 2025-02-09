@@ -1,9 +1,10 @@
 // src/utils/balanceSheetUtils.js
+
 export const defaultBalanceSheet = (id, year, name = '') => ({
   id: `sheet-${id}`,
-  name, // New field for the company name
+  name,
   year,
-  // Identifier is computed by concatenating name and year. If name is empty, just use the year.
+  // identifier = name+year
   identifier: name ? `${name}-${year}` : `${year}`,
   assets: {
     current: {
@@ -59,3 +60,7 @@ export const defaultBalanceSheet = (id, year, name = '') => ({
   depreciation: 0,
   amortization: 0,
 });
+
+export const sumValues = (obj) => {
+  return Object.values(obj).reduce((total, value) => total + Number(value), 0);
+};
