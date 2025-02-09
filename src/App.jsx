@@ -20,7 +20,8 @@ import SummaryPage from './components/SummaryPage';
 import LandingScreen from './components/LandingScreen';
 import GameScreen from './components/GameScreen';
 import GameProgress from './components/GameProgress';
-import GamePlay from './components/GamePlay';
+import GamePlay from './components/GamePlay2';
+import GameEnd from './components/GameEnd';
 
 // Helper function to create a fresh copy of the default companies data.
 const getInitialCompanies = () => [

@@ -1,8 +1,10 @@
-// GamePlay2.jsx
+// GamePlayCalculation.jsx
 import React, { useState } from 'react';
+import GameEnd from './GameEnd'; // GameEnd 컴포넌트를 임포트
+import { useNavigate } from 'react-router-dom';
 
-// 문제 데이터 (총 10문제)
-// 숫자형 정답의 경우, 오차 허용범위 0.01로 판별합니다.
+// Question data (10 questions total)
+// For numeric answers, a tolerance of 0.01 is allowed.
 const questionsData = [
   {
     id: 1,
@@ -37,7 +39,6 @@ const questionsData = [
     question_text: "Calculate the Net Profit Margin",
     formula: "Net Profit Margin = (Revenue - COGS) / Revenue",
     calculation: "(1,500,000 - 1,200,000) / 1,500,000 = 300,000 / 1,500,000 = 0.20 (or 20%)",
-    // 정답은 퍼센트 표기이므로 숫자 20 (즉, 20%)로 비교
     answer: 20
   },
   {
@@ -77,46 +78,55 @@ const questionsData = [
   }
 ];
 
-// 왼쪽에 표시될 재무제표 텍스트 (고정)
-const financialStatements = `
-**Given Financial Statements**
+// Create the financial statements content as a JSX element
+// (Headers are center-aligned, and the rest is left-aligned)
+const FinancialStatementsContent = () => (
+  <div style={{ whiteSpace: 'normal' }}>
+    <p style={{ textAlign: 'center', fontWeight: 'bold' }}>&lt;Given Financial Statements&gt;</p>
+    
+    <p style={{ textAlign: 'center' }}>Balance Sheet (as of a specific date):</p>
+    <div style={{ textAlign: 'left', marginLeft: '20px' }}>
+      <p>- Current Assets: $300,000</p>
+      <p style={{ marginLeft: '20px', fontWeight: 'bold' }}>- Inventories: $80,000</p>
+      <p>- Current Liabilities: $150,000</p>
+      <p>- Total Liabilities: $400,000</p>
+      <p>- Total Assets: $700,000</p>
+      <p>- Shareholders' Equity: $300,000</p>
+    </div>
+    
+    <p style={{ textAlign: 'center', fontWeight: 'bold' }}>Income Statement (for the period):</p>
+    <div style={{ textAlign: 'left', marginLeft: '20px' }}>
+      <p>- Revenue: $1,500,000</p>
+      <p>- Cost of Goods Sold (COGS): $1,200,000</p>
+      <p>- Net Income: $300,000</p>
+      <p>- Operating Income: $360,000</p>
+      <p>- Interest Expense: $20,000</p>
+      <p>- Income Taxes: $40,000</p>
+      <p>- Depreciation: $50,000</p>
+      <p>- Amortization: $10,000</p>
+    </div>
+  </div>
+);
 
-Balance Sheet (as of a specific date):
-
-- Current Assets: $300,000
-    - Inventories: $80,000
-- Current Liabilities: $150,000
-- Total Liabilities: $400,000
-- Total Assets: $700,000
-- Shareholders' Equity: $300,000
-
-Income Statement (for the period):
-
-- Revenue: $1,500,000
-- Cost of Goods Sold (COGS): $1,200,000
-- Net Income: $300,000
-- Operating Income: $360,000
-- Interest Expense: $20,000
-- Income Taxes: $40,000
-- Depreciation: $50,000
-- Amortization: $10,000
-`;
-
-const GamePlay2 = () => {
+const GamePlayCalculation = () => {
   const totalQuestions = questionsData.length;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false); // Settings modal
+  // 결과 배열 저장 (각 문제 결과 객체)
+  const [results, setResults] = useState([]);
+  // 게임 종료 상태
+  const [gameOver, setGameOver] = useState(false);
+  const navigate = useNavigate();
 
   const currentQuestion = questionsData[currentIndex];
 
-  // 정답 판별 (숫자로 변환하여 오차 0.01 이내면 정답)
+  // Validate the answer (convert input to number and allow tolerance of 0.01)
   const checkAnswer = () => {
     const parsedAnswer = parseFloat(userAnswer);
     const correctAnswer = currentQuestion.answer;
-    // 만약 입력이 숫자로 변환되지 않으면 오답 처리
     if (isNaN(parsedAnswer)) return false;
     return Math.abs(parsedAnswer - correctAnswer) < 0.01;
   };
@@ -128,36 +138,50 @@ const GamePlay2 = () => {
   };
 
   const handleNext = () => {
+    // 저장할 결과 객체 구성
+    const resultEntry = {
+      id: currentQuestion.id,
+      questionText: currentQuestion.question_text,
+      userAnswer: userAnswer,
+      correctAnswer: currentQuestion.answer,
+      isCorrect: checkAnswer(),
+      calculation: currentQuestion.calculation,
+      formula: currentQuestion.formula
+    };
+
+    setResults([...results, resultEntry]);
     setIsSubmitted(false);
     setUserAnswer("");
     if (currentIndex < totalQuestions - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      alert("Quiz completed!");
-      setCurrentIndex(0);
+      setGameOver(true);
     }
   };
 
-  // 토글: 도움말(공식) 모달
   const toggleHelp = () => {
     setShowHelp(!showHelp);
   };
 
-  // Settings 모달 핸들러
+  // Settings modal handlers
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const handleEndSession = () => {
     alert("Session ended. Redirecting to home screen...");
     setIsModalOpen(false);
-    // 실제 앱에서는 리디렉션 처리 필요 (예: react-router 사용)
+    // 실제 앱에서는 리디렉션 처리 (예: using react-router)
   };
 
-  // 진행률 계산
   const progressPercentage = ((currentIndex + 1) / totalQuestions) * 100;
 
+  // 게임 종료 시 GameEnd 컴포넌트 렌더링
+  if (gameOver) {
+    return <GameEnd results={results} />;
+  }
+
   return (
-    <div style={{ position: 'relative', minHeight: '100vh', fontFamily: 'Arial, sans-serif' }}>
-      {/* 상단바: Settings 버튼 및 진행률 바 */}
+    <div style={{ position: 'relative', minHeight: '100vh', fontFamily: 'Arial, sans-serif', backgroundColor: '#f0f0f0' }}>
+      {/* Top bar: Settings button and progress bar */}
       <div
         style={{
           position: 'fixed',
@@ -203,14 +227,14 @@ const GamePlay2 = () => {
             ></div>
           </div>
         </div>
-        <div style={{ marginRight: '50px' }}>
+        <div style={{ marginRight: '50px', fontSize: '16px' }}>
           {currentIndex + 1} / {totalQuestions}
         </div>
       </div>
 
-      {/* 메인 콘텐츠: 왼쪽 고정 재무제표 박스 + 오른쪽 문제 영역 */}
-      <div style={{ display: 'flex', marginTop: '80px', padding: '20px' }}>
-        {/* 왼쪽: 재무제표 고정 박스 */}
+      {/* Main content: Left financial statements area + Right question area */}
+      <div style={{ display: 'flex', marginTop: '80px', padding: '20px', alignItems: 'center' }}>
+        {/* Left: Financial statements box with extra left margin */}
         <div
           style={{
             width: '35%',
@@ -219,23 +243,28 @@ const GamePlay2 = () => {
             border: '1px solid #ccc',
             borderRadius: '8px',
             backgroundColor: '#fafafa',
-            height: 'fit-content',
             position: 'sticky',
             top: '80px',
             marginRight: '20px',
-            whiteSpace: 'pre-wrap'
+            marginLeft: '200px'
           }}
         >
-          {financialStatements}
+          <FinancialStatementsContent />
         </div>
 
-        {/* 오른쪽: 문제 영역 */}
-        <div style={{ flex: 1, padding: '20px', border: '1px solid #eee', borderRadius: '8px' }}>
+        {/* Right: Question area */}
+        <div
+          style={{
+            flex: 1,
+            padding: '20px',
+            border: '1px solid #eee',
+            borderRadius: '8px',
+            textAlign: 'center'
+          }}
+        >
           <h2>{currentQuestion.question_text}</h2>
-
-          {/* 숫자 입력 폼 */}
           {!isSubmitted && (
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} style={{ display: 'inline-block', textAlign: 'center' }}>
               <input
                 type="number"
                 step="any"
@@ -262,7 +291,6 @@ const GamePlay2 = () => {
             </form>
           )}
 
-          {/* 제출 후 피드백 */}
           {isSubmitted && (
             <div style={{ marginTop: '20px' }}>
               {checkAnswer() ? (
@@ -272,7 +300,9 @@ const GamePlay2 = () => {
                   <p style={{ color: 'red', fontSize: '18px' }}>
                     Incorrect! The correct answer is: {currentQuestion.answer}
                   </p>
-                  <p><strong>Calculation:</strong> {currentQuestion.calculation}</p>
+                  <p>
+                    <strong>Calculation:</strong> {currentQuestion.calculation}
+                  </p>
                 </div>
               )}
               <button
@@ -289,7 +319,6 @@ const GamePlay2 = () => {
             </div>
           )}
 
-          {/* 전구 아이콘 버튼 (도움말: 공식) */}
           <div style={{ marginTop: '20px' }}>
             <button
               onClick={toggleHelp}
@@ -305,10 +334,8 @@ const GamePlay2 = () => {
             </button>
           </div>
 
-          {/* 도움말(공식) 모달 */}
           {showHelp && (
             <div>
-              {/* 모달 오버레이 */}
               <div
                 onClick={toggleHelp}
                 style={{
@@ -357,10 +384,9 @@ const GamePlay2 = () => {
         </div>
       </div>
 
-      {/* Settings 모달 */}
+      {/* Settings modal */}
       {isModalOpen && (
         <div>
-          {/* 오버레이 */}
           <div
             onClick={closeModal}
             style={{
@@ -423,4 +449,4 @@ const GamePlay2 = () => {
   );
 };
 
-export default GamePlay2;
+export default GamePlayCalculation;
