@@ -5,13 +5,14 @@ const LandingScreen = () => {
   return (
     <div
       style={{
-        padding: '2rem',
-        textAlign: 'center',
-        minHeight: '90vh',
+        height: 'calc(100vh - 121px)', // account for header/subheader if needed
+        overflow: 'hidden',           // prevent scrolling
+        marginTop: '-60px',           // shift content upward
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center'
+        justifyContent: 'center',     // center content vertically
+        alignItems: 'center',         // center content horizontally
+        textAlign: 'center',
       }}
     >
       <h2 style={{ marginBottom: '2rem', color: '#4B286D' }}>Welcome</h2>
