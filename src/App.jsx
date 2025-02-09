@@ -26,6 +26,8 @@ import GameScreen from './components/GameScreen';
 import GameProgress from './components/GameProgress';
 import GamePlay from './components/GamePlay';
 import GameEnd from './components/GameEnd';
+import { useDispatch } from 'react-redux';
+import { reset } from './store/dateSlice';
 
 // Helper function to create a fresh copy of the default companies data.
 const getInitialCompanies = () => [
@@ -41,8 +43,9 @@ const getInitialCompanies = () => [
 //
 const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible, handleLogout, companies }) => {
   const location = useLocation();
+  const dispatch = useDispatch();
 
-  // Determine which section we’re in based on the pathname
+  // Determine which section we're in based on the pathname
   const isAnalysis =
     location.pathname.startsWith('/sheets') ||
     location.pathname.startsWith('/visualization') ||
@@ -139,6 +142,11 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible, ha
     );
   }
 
+  const handleLogoutClick = () => {
+    dispatch(reset());
+    handleLogout();
+  };
+
   return (
     <>
       {/* Top Header with Logout Button */}
@@ -168,7 +176,7 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible, ha
         </div>
         {/* Logout Button */}
         <button
-          onClick={handleLogout}
+          onClick={handleLogoutClick}
           style={{
             background: 'transparent',
             border: '1px solid #fff',
@@ -299,7 +307,7 @@ const App = () => {
     }
   };
 
-  // Logout handler: Save current user’s data and clear authentication.
+  // Logout handler: Save current user's data and clear authentication.
   const handleLogout = () => {
     const dataToSave = {
       companies,

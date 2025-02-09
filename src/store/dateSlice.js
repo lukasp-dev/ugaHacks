@@ -11,8 +11,8 @@ const dateSlice = createSlice({
     increment: (state) => {
       state.value += 1;
     },
-    reset: (state) => {
-      state.value = 1;
+    reset: () => {
+      return { value: 1 };
     },
   },
 });
