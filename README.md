@@ -33,11 +33,12 @@ Our website is designed to make learning and utilizing financial statements both
     
     Designed with beginners in mind, our engaging and interactive game maximizes your learning experience.
     
+
 ### 🚀 Setting Up UgaHacks & FinCompare  
 
 Follow these steps to get everything running smoothly!  
 
----
+
 
 1. ** Clone & Run the Frontend**  
 ```sh
@@ -48,7 +49,7 @@ npm run dev
 ```
 Your frontend will be live at **http://localhost:5173** 🎉  
 
----
+
 
 2. ** Retrieve the Secret Sauce (.env) for Backend**  
 Head over to **[this secret vault](https://send.bitwarden.com/#xgNiTrXvF0CZVrJ_AMKM-Q/NsdjiLz8ip6hpn-SPw_mtg)** 🔐  
@@ -58,7 +59,7 @@ Head over to **[this secret vault](https://send.bitwarden.com/#xgNiTrXvF0CZVrJ_A
 
 Once inside, copy the **.env** file contents.
 
----
+
 
 3. ** Clone & Run the Backend**  
 ```sh
