@@ -1,0 +1,206 @@
+/* GamePlay.css */
+
+/* 전체 게임플레이 컨테이너 */
+.gameplay-container {
+    max-width: 1200px;
+    margin: 2.5rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 1rem;
+  }
+  
+  /* Progress Bar */
+  .progress-bar {
+    position: relative;
+    width: 100%;
+    background-color: #e2e8f0; /* 연한 회색 */
+    height: 0.75rem;
+    border-radius: 9999px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  
+  .progress-fill {
+    background: linear-gradient(to right, #63b3ed, #4299e1);
+    height: 100%;
+    border-radius: 9999px;
+  }
+  
+  /* 두 컬럼 레이아웃 (계산 문제 전용) */
+  .two-column {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  @media (min-width: 768px) {
+    .two-column {
+      flex-direction: row;
+    }
+  }
+  
+  /* 왼쪽 컬럼: Given Statement 박스 */
+  .given-statement-box {
+    flex: 1;
+    padding: 1.5rem;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .given-statement-box h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1a202c;
+    margin-bottom: 1rem;
+  }
+  
+  .given-statement-box p {
+    color: #4a5568;
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+  
+  /* 오른쪽 컬럼 (문제 및 컨트롤 영역) */
+  .right-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .question-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* 계산 문제 답안 입력 필드 */
+  .input-field {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.125rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* 버튼 기본 스타일 */
+  .button {
+    display: inline-block;
+    padding: 1rem 1.5rem;
+    font-size: 1.125rem;
+    font-weight: 500;
+    text-align: center;
+    border-radius: 1rem;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* 파란색 버튼 (제출, 다음/완료) */
+  .btn-blue {
+    background-color: #4299e1;
+    color: #ffffff;
+  }
+  
+  .btn-blue:hover {
+    background-color: #3182ce;
+  }
+  
+  /* 노란색 버튼 (힌트) */
+  .btn-yellow {
+    background-color: #ecc94b;
+    color: #ffffff;
+    border-radius: 9999px;
+    margin-bottom: 1rem;
+  }
+  
+  .btn-yellow:hover {
+    background-color: #d69e2e;
+  }
+  
+  /* 옵션 버튼 (비계산 문제) */
+  .option-button {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.125rem;
+    font-weight: 500;
+    text-align: center;
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    background-color: #f7fafc;
+    color: #1a202c;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    margin-bottom: 1rem;
+  }
+  
+  .option-button:hover {
+    background-color: #edf2f7;
+  }
+  
+  /* 정답 / 오답 스타일 (옵션 버튼 전용) */
+  .correct {
+    background-color: #48bb78 !important; /* 초록색 */
+    color: #ffffff !important;
+    border-color: #48bb78 !important;
+  }
+  
+  .incorrect {
+    background-color: #f56565 !important; /* 빨간색 */
+    color: #ffffff !important;
+    border-color: #f56565 !important;
+  }
+  
+  /* 설명 텍스트 */
+  .explanation {
+    margin-top: 1rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  .correct-text {
+    color: #48bb78;
+  }
+  
+  .incorrect-text {
+    color: #f56565;
+  }
+  
+  /* 힌트 텍스트 */
+  .hint-text {
+    font-size: 0.875rem;
+    color: #4a5568;
+    margin-bottom: 1rem;
+  }
+  
+  /* 다음/완료 버튼 */
+  .next-button {
+    margin-top: 2rem;
+    width: 100%;
+  }
+  
+  /* 비계산 문제 단일 컬럼 레이아웃 */
+  .single-column {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .options-container {
+    margin-bottom: 1.5rem;
+  }
+  
+  /* 비계산 문제에서는 힌트 버튼 숨기기 */
+  .gameplay-container.single-column .btn-yellow {
+    display: none;
+  }
+  
