@@ -1,0 +1,63 @@
+/* LandingScreen.module.css */
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    background: #1B1035;
+    color: white;
+  }
+  
+  .title {
+    font-size: 4rem;
+    font-weight: bold;
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px;
+  }
+  
+  .description {
+    font-size: 1.8rem;
+    max-width: 800px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .gameButton, .analysisButton {
+    font-size: 1.5rem;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .gameButton {
+    background: #1e90ff;
+    color: white;
+    box-shadow: 0 5px 15px rgba(30, 144, 255, 0.3);
+  }
+  
+  .analysisButton {
+    background: #ff69b4;
+    color: white;
+    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
+  }
+  
+  .gameButton:hover {
+    background: #0073e6;
+    transform: scale(1.1);
+  }
+  
+  .analysisButton:hover {
+    background: #ff1493;
+    transform: scale(1.1);
+  }
+  
