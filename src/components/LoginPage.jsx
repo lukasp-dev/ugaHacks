@@ -1,135 +1,81 @@
-// src/components/LoginPage.jsx
-import React, { useState } from 'react';
+import React, { useEffect } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import useLoginApi from "../api/login";
 
 const LoginPage = ({ onLogin, onSignUp }) => {
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const { loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isSignUp) {
-      if (password !== confirmPassword) {
-        alert("Passwords do not match");
-        return;
-      }
-      onSignUp(username, password);
-    } else {
-      onLogin(username, password);
-    }
+  const handleLogin = async () => {
+    await loginWithRedirect({
+      redirectUri: window.location.origin + "/home", // Auth0 로그인 후 리디렉트
+    });
   };
 
   return (
     <div
-      className="login-page"
       style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        background: '#f2f2f2',
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        background: "#f2f2f2",
       }}
     >
       <div
         style={{
-          background: '#fff',
-          padding: '2rem',
-          borderRadius: '8px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-          width: '300px',
+          background: "#fff",
+          padding: "2rem",
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+          width: "300px",
+          textAlign: "center",
         }}
       >
-        <h2 style={{ textAlign: 'center' }}>
-          {isSignUp ? "Sign Up" : "Log In"}
-        </h2>
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '1rem' }}>
-            <label htmlFor="username">Username:</label>
-            <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.5rem',
-                marginTop: '0.5rem',
-              }}
-              required
-            />
-          </div>
-          <div style={{ marginBottom: '1rem' }}>
-            <label htmlFor="password">Password:</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.5rem',
-                marginTop: '0.5rem',
-              }}
-              required
-            />
-          </div>
-          {isSignUp && (
-            <div style={{ marginBottom: '1rem' }}>
-              <label htmlFor="confirmPassword">Confirm Password:</label>
-              <input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  marginTop: '0.5rem',
-                }}
-                required
-              />
-            </div>
-          )}
-          <button
-            type="submit"
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              background: 'var(--truist-purple)',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '1rem',
-            }}
-          >
-            {isSignUp ? "Sign Up" : "Log In"}
-          </button>
-        </form>
-        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-          {isSignUp ? (
+        <h2>{isAuthenticated ? "Welcome!" : "Log In"}</h2>
+
+        {isAuthenticated ? (
+          <>
             <p>
-              Already have an account?{' '}
-              <span
-                style={{ color: 'blue', cursor: 'pointer' }}
-                onClick={() => setIsSignUp(false)}
-              >
-                Log In
-              </span>
+              Logged in as: <strong>{user.name}</strong>
             </p>
-          ) : (
-            <p>
-              Don't have an account?{' '}
-              <span
-                style={{ color: 'blue', cursor: 'pointer' }}
-                onClick={() => setIsSignUp(true)}
-              >
-                Sign Up
-              </span>
-            </p>
-          )}
-        </div>
+            <button
+              onClick={() => logout({ returnTo: window.location.origin })}
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                background: "red",
+                color: "#fff",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "1rem",
+                marginTop: "1rem",
+              }}
+            >
+              Log Out
+            </button>
+          </>
+        ) : (
+          <>
+            <p>Please log in using Auth0</p>
+            <button
+              onClick={handleLogin}
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                background: "#4C8BF5",
+                color: "#fff",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+                fontSize: "1rem",
+              }}
+            >
+              Log In with Auth0
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

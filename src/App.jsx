@@ -1,3 +1,4 @@
+// src/App.jsx
 import React, { useState, useRef } from 'react';
 import {
   BrowserRouter as Router,
@@ -20,6 +21,7 @@ import LandingScreen from './components/LandingScreen';
 import GameScreen from './components/GameScreen';
 import GameProgress from './components/GameProgress';
 import GamePlay from './components/GamePlay';
+import AuthProvider from './AuthProvider';
 
 //
 // APP LAYOUT (HEADER & SUBHEADER)
@@ -65,7 +67,7 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible }) 
     cursor: 'not-allowed'
   };
 
-  // Render nav buttons only when not on the landing page.
+  // Render nav buttons only when in Analysis or Game sections.
   let navContent = null;
   if (isAnalysis) {
     navContent = (
@@ -130,7 +132,6 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible }) 
       >
         {/* Left group: Logo and nav buttons */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          {/* Logo container: fixed width with overflow hidden */}
           <Link to="/home">
             <div
               className="logo"
@@ -150,7 +151,6 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible }) 
               />
             </div>
           </Link>
-          {/* Nav buttons container with left margin to ensure separation */}
           <div style={{ marginLeft: '1rem' }}>
             {navContent}
           </div>
@@ -164,7 +164,6 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible }) 
     </>
   );
 };
-
 
 //
 // MAIN APP COMPONENT
@@ -201,49 +200,6 @@ const App = () => {
   // ------------------------------
   const [visualizationAccessible, setVisualizationAccessible] = useState(false);
   const [summaryAccessible, setSummaryAccessible] = useState(false);
-
-  // ------------------------------
-  // STYLE OBJECTS (used within sheets page, etc.)
-  // ------------------------------
-  const companyNavBtnStyle = {
-    padding: '0.5rem 1rem',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    marginBottom: '0.5rem',
-    width: '100%',
-    textAlign: 'left',
-    backgroundColor: '#F8F9F9',
-    cursor: 'pointer',
-  };
-
-  const activeCompanyNavBtnStyle = {
-    ...companyNavBtnStyle,
-    backgroundColor: '#EBF5FB',
-    borderColor: '#AED6F1',
-    fontWeight: 'bold',
-  };
-
-  const btnStyle = {
-    padding: '0.75rem 1.5rem',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    margin: '0.5rem',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-  };
-
-  const addCompanyBtnStyle = {
-    ...btnStyle,
-    backgroundColor: '#D6EAF8',
-    color: '#154360',
-  };
-
-  const nextBtnStyle = {
-    ...btnStyle,
-    backgroundColor: '#D5F5E3',
-    color: '#1E8449',
-  };
 
   // ------------------------------
   // HANDLER FUNCTIONS
@@ -436,14 +392,6 @@ const App = () => {
         fieldId: `sheet-${sheet.id}.profit`,
       });
     }
-    if (Number(sheet.openingIncome) === 0) {
-      errors.push({
-        sheetId: sheet.id,
-        sheetYear: sheet.year,
-        location: 'Opening Income',
-        fieldId: `sheet-${sheet.id}.openingIncome`,
-      });
-    }
     if (Number(sheet.netIncome) === 0) {
       errors.push({
         sheetId: sheet.id,
@@ -586,8 +534,8 @@ const App = () => {
                   }}
                   style={
                     company.id === currentCompanyId
-                      ? activeCompanyNavBtnStyle
-                      : companyNavBtnStyle
+                      ? { padding: '0.5rem 1rem', backgroundColor: '#EBF5FB', border: '1px solid #AED6F1', fontWeight: 'bold', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
+                      : { padding: '0.5rem 1rem', backgroundColor: '#F8F9F9', border: '1px solid #ccc', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
                   }
                   autoFocus
                 />
@@ -595,8 +543,8 @@ const App = () => {
                 <button
                   style={
                     company.id === currentCompanyId
-                      ? activeCompanyNavBtnStyle
-                      : companyNavBtnStyle
+                      ? { padding: '0.5rem 1rem', backgroundColor: '#EBF5FB', border: '1px solid #AED6F1', fontWeight: 'bold', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
+                      : { padding: '0.5rem 1rem', backgroundColor: '#F8F9F9', border: '1px solid #ccc', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
                   }
                   onClick={() => setCurrentCompanyId(company.id)}
                   onDoubleClick={() => {
@@ -639,13 +587,13 @@ const App = () => {
               {companies.length < 5 && (
                 <button
                   className="btn-add-company"
-                  style={addCompanyBtnStyle}
+                  style={{ padding: '0.75rem 1.5rem', backgroundColor: '#D6EAF8', color: '#154360', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '1rem', margin: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
                   onClick={handleAddCompany}
                 >
                   ADD COMPANY
                 </button>
               )}
-              <button className="btn-compare-data" style={nextBtnStyle} onClick={handleNextAndCompare}>
+              <button className="btn-compare-data" style={{ padding: '0.75rem 1.5rem', backgroundColor: '#D5F5E3', color: '#1E8449', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '1rem', margin: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} onClick={handleNextAndCompare}>
                 NEXT
               </button>
             </div>
@@ -667,56 +615,72 @@ const App = () => {
   // MAIN RENDER
   // ------------------------------
   return (
-    <>
-      {!currentUser ? (
-        <LoginPage onLogin={handleLogin} onSignUp={handleSignUp} />
-      ) : (
-        <Router>
-          <Routes>
-            <Route
-              element={
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* 로그인 페이지 */}
+          <Route
+            path="/login"
+            element={
+              !currentUser ? (
+                <LoginPage onLogin={handleLogin} onSignUp={handleSignUp} />
+              ) : (
+                <Navigate to="/home" replace />
+              )
+            }
+          />
+
+          {/* 인증이 필요한 페이지들을 AppLayout 내부에 렌더링 */}
+          <Route
+            path="/"
+            element={
+              currentUser ? (
                 <AppLayout
                   currentUser={currentUser}
                   visualizationAccessible={visualizationAccessible}
                   summaryAccessible={summaryAccessible}
                 />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          >
+            <Route path="home" element={<LandingScreen />} />
+            <Route path="sheets" element={<SheetsPage />} />
+            <Route
+              path="visualization"
+              element={
+                visualizationAccessible ? (
+                  <VisualizationPage onNext={() => setSummaryAccessible(true)} />
+                ) : (
+                  <Navigate to="/sheets" replace />
+                )
               }
-            >
-              <Route path="/home" element={<LandingScreen />} />
-              <Route path="/sheets" element={<SheetsPage />} />
-              <Route
-                path="/visualization"
-                element={
-                  visualizationAccessible ? (
-                    // Pass a prop (onNext) to VisualizationPage so that when the user clicks NEXT there,
-                    // summary becomes accessible.
-                    <VisualizationPage onNext={() => { setSummaryAccessible(true); }} />
-                  ) : (
-                    <Navigate to="/sheets" replace />
-                  )
-                }
-              />
-              <Route
-                path="/summary"
-                element={
-                  summaryAccessible ? (
-                    <SummaryPage />
-                  ) : (
-                    <Navigate to="/sheets" replace />
-                  )
-                }
-              />
-              <Route path="/game/*" element={<GameScreen />}>
-                <Route path="progress" element={<GameProgress />} />
-                <Route path="play" element={<GamePlay />} />
-                <Route index element={<GamePlay />} />
-              </Route>
-              <Route path="/" element={<Navigate to="/home" replace />} />
+            />
+            <Route
+              path="summary"
+              element={
+                summaryAccessible ? (
+                  <SummaryPage />
+                ) : (
+                  <Navigate to="/sheets" replace />
+                )
+              }
+            />
+            <Route path="game/*" element={<GameScreen />}>
+              <Route path="progress" element={<GameProgress />} />
+              <Route path="play" element={<GamePlay />} />
+              <Route index element={<GamePlay />} />
             </Route>
-          </Routes>
-        </Router>
-      )}
-    </>
+            {/* 기본 경로 리디렉션 */}
+            <Route index element={<Navigate to="/home" replace />} />
+          </Route>
+
+          {/* 그 외 경로 처리 */}
+          <Route path="*" element={<Navigate to="/home" replace />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 };
 
