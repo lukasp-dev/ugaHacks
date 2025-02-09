@@ -1,11 +1,16 @@
 // src/components/EditableField.jsx
 import React, { useState, useEffect } from 'react';
 
-const EditableField = ({ value, onChange, isYear, fieldId, error }) => {
+const EditableField = ({
+  value,
+  onChange,
+  inputType = "number", // Allowed values: "number" (default), "year", or "text"
+  fieldId,
+  error
+}) => {
   const [editing, setEditing] = useState(false);
   const [localValue, setLocalValue] = useState(value);
 
-  // Update localValue whenever the incoming value prop changes.
   useEffect(() => {
     setLocalValue(value);
     console.log(`EditableField ${fieldId} received new value:`, value);
@@ -18,8 +23,14 @@ const EditableField = ({ value, onChange, isYear, fieldId, error }) => {
 
   const handleBlur = () => {
     setEditing(false);
-    // Ensure we pass a number (or an integer if isYear) back to onChange.
-    onChange(isYear ? parseInt(localValue, 10) : Number(localValue));
+    if (inputType === "number") {
+      onChange(Number(localValue));
+    } else if (inputType === "year") {
+      onChange(parseInt(localValue, 10));
+    } else {
+      // For "text"
+      onChange(localValue);
+    }
   };
 
   const handleChange = (e) => setLocalValue(e.target.value);
@@ -27,15 +38,17 @@ const EditableField = ({ value, onChange, isYear, fieldId, error }) => {
   return editing ? (
     <input
       className={`editable-input ${error ? 'error' : ''}`}
-      type="number"
+      type={inputType === "number" || inputType === "year" ? "number" : "text"}
       value={localValue}
       onChange={handleChange}
       onBlur={handleBlur}
       autoFocus
+      onClick={(e) => e.stopPropagation()}
+      onMouseDown={(e) => e.stopPropagation()}
     />
   ) : (
     <span className={`editable-field ${error ? 'error' : ''}`} onClick={handleClick}>
-      {isYear ? localValue : `$${Number(localValue).toLocaleString()}`}
+      {inputType === "number" ? `$${Number(localValue).toLocaleString()}` : localValue}
     </span>
   );
 };

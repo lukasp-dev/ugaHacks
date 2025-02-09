@@ -13,6 +13,7 @@ import {
 import BalanceSheetForm from './components/BalanceSheetForm';
 import ValidationModal from './components/ValidationModal';
 import { defaultBalanceSheet } from './utils/balanceSheetUtils';
+import { getAllBalanceSheets } from './utils/sheetHelpers'; // <-- Added import
 import TruistLogo from './assets/truist-logo.png';
 import LoginPage from './components/LoginPage';
 import VisualizationPage from './components/VisualizationPage';
@@ -28,7 +29,7 @@ const getInitialCompanies = () => [
   {
     id: 1,
     name: "Company A",
-    sheets: [defaultBalanceSheet(1, new Date().getFullYear())],
+    sheets: [defaultBalanceSheet(1, new Date().getFullYear(), "Company A")],
   },
 ];
 
@@ -295,6 +296,7 @@ const App = () => {
 
   // --- Balance Sheet Functions (updateSheet, addNextSheet, etc.) ---
   const updateSheet = (updatedSheet) => {
+    // Check for duplicate years in a different sheet
     const duplicateExists = currentCompany.sheets.some(
       (sheet) =>
         sheet.id !== updatedSheet.id && Number(sheet.year) === Number(updatedSheet.year)
@@ -308,14 +310,19 @@ const App = () => {
         prev.filter((errorId) => errorId !== `sheet-${updatedSheet.id}.year`)
       );
     }
+    // If the updated sheet's name (from file upload) differs from the current company name,
+    // update the company name and all its sheets accordingly.
     setCompanies((prev) =>
       prev.map((company) => {
         if (company.id === currentCompanyId) {
+          const newCompanyName = updatedSheet.name;
           const updatedSheets = company.sheets.map((sheet) =>
-            sheet.id === updatedSheet.id ? updatedSheet : sheet
+            sheet.id === updatedSheet.id
+              ? updatedSheet
+              : { ...sheet, name: newCompanyName, identifier: `${newCompanyName}-${sheet.year}` }
           );
           updatedSheets.sort((a, b) => a.year - b.year);
-          return { ...company, sheets: updatedSheets };
+          return { ...company, name: newCompanyName, sheets: updatedSheets };
         }
         return company;
       })
@@ -336,7 +343,7 @@ const App = () => {
           const newYear = company.sheets.length
             ? Math.max(...company.sheets.map((s) => s.year)) + 1
             : new Date().getFullYear();
-          const newSheet = defaultBalanceSheet(newId, newYear);
+          const newSheet = defaultBalanceSheet(newId, newYear, company.name);
           const updatedSheets = [...company.sheets, newSheet];
           updatedSheets.sort((a, b) => a.year - b.year);
           return { ...company, sheets: updatedSheets };
@@ -360,7 +367,7 @@ const App = () => {
     const newId = currentCompany.sheets.length
       ? Math.max(...currentCompany.sheets.map((s) => s.id)) + 1
       : 1;
-    const newSheet = defaultBalanceSheet(newId, newYear);
+    const newSheet = defaultBalanceSheet(newId, newYear, currentCompany.name);
     const updatedSheets = [...currentCompany.sheets, newSheet];
     updatedSheets.sort((a, b) => a.year - b.year);
     setCompanies((prev) =>
@@ -384,7 +391,7 @@ const App = () => {
     const newId = currentCompany.sheets.length
       ? Math.max(...currentCompany.sheets.map((s) => s.id)) + 1
       : 1;
-    const newSheet = defaultBalanceSheet(newId, newYear);
+    const newSheet = defaultBalanceSheet(newId, newYear, currentCompany.name);
     const updatedSheets = [...currentCompany.sheets, newSheet];
     updatedSheets.sort((a, b) => a.year - b.year);
     setCompanies((prev) =>
@@ -416,7 +423,7 @@ const App = () => {
     const newCompany = {
       id: newCompanyId,
       name: newCompanyName,
-      sheets: [defaultBalanceSheet(1, new Date().getFullYear())],
+      sheets: [defaultBalanceSheet(1, new Date().getFullYear(), newCompanyName)],
     };
     setCompanies((prev) => [...prev, newCompany]);
     setCurrentCompanyId(newCompanyId);
@@ -436,10 +443,17 @@ const App = () => {
     }
   };
 
+  // ------------------------------
+  // SHEETS PAGE COMPONENT (Updated NEXT Button Handler)
+  // ------------------------------
   const SheetsPage = () => {
     const navigate = useNavigate();
 
     const handleNextAndCompare = () => {
+      console.log("NEXT button clicked");
+      const allBalanceSheets = getAllBalanceSheets(companies);
+      console.log("Flattened balance sheets array:", allBalanceSheets);
+      localStorage.setItem("allBalanceSheets", JSON.stringify(allBalanceSheets));
       // Unlock navigation to Visualization and navigate
       setVisualizationAccessible(true);
       navigate('/visualization');
@@ -462,18 +476,40 @@ const App = () => {
                   onChange={(e) => setEditingCompanyName(e.target.value)}
                   onBlur={() => {
                     setCompanies((prev) =>
-                      prev.map((c) =>
-                        c.id === company.id ? { ...c, name: editingCompanyName } : c
-                      )
+                      prev.map((c) => {
+                        if (c.id === company.id) {
+                          return {
+                            ...c,
+                            name: editingCompanyName,
+                            sheets: c.sheets.map(sheet => ({
+                              ...sheet,
+                              name: editingCompanyName,
+                              identifier: editingCompanyName ? `${editingCompanyName}-${sheet.year}` : sheet.year,
+                            }))
+                          };
+                        }
+                        return c;
+                      })
                     );
                     setEditingCompanyId(null);
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       setCompanies((prev) =>
-                        prev.map((c) =>
-                          c.id === company.id ? { ...c, name: editingCompanyName } : c
-                        )
+                        prev.map((c) => {
+                          if (c.id === company.id) {
+                            return {
+                              ...c,
+                              name: editingCompanyName,
+                              sheets: c.sheets.map(sheet => ({
+                                ...sheet,
+                                name: editingCompanyName,
+                                identifier: editingCompanyName ? `${editingCompanyName}-${sheet.year}` : sheet.year,
+                              }))
+                            };
+                          }
+                          return c;
+                        })
                       );
                       setEditingCompanyId(null);
                     }
@@ -513,7 +549,7 @@ const App = () => {
                   sheet={sheet}
                   onUpdate={updateSheet}
                   validationErrors={validationErrors}
-                  onDelete={deleteSheet}
+                  onDelete={() => deleteSheet(sheet.id)}
                   onAddPrevious={addPreviousSheet}
                   onAddNext={addNextSheetFor}
                 />
