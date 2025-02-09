@@ -20,7 +20,8 @@ import { getAllBalanceSheets } from './utils/sheetHelpers';
 import TruistLogo from './assets/truist-logo.png';
 import LoginPage from './components/LoginPage';
 import VisualizationPage from './components/VisualizationPage';
-import SummaryPage from './components/SummaryPage';
+// Removed SummaryPage import since it's no longer used.
+// import SummaryPage from './components/SummaryPage';
 import LandingScreen from './components/LandingScreen';
 import GameScreen from './components/GameScreen';
 import GameProgress from './components/GameProgress';
@@ -39,14 +40,13 @@ const getInitialCompanies = () => [
 //
 // APP LAYOUT COMPONENT (includes header with Logout button)
 //
-const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible, handleLogout, companies }) => {
+const AppLayout = ({ currentUser, visualizationAccessible, handleLogout, companies }) => {
   const location = useLocation();
 
   // Determine which section we’re in based on the pathname
   const isAnalysis =
     location.pathname.startsWith('/sheets') ||
-    location.pathname.startsWith('/visualization') ||
-    location.pathname.startsWith('/summary');
+    location.pathname.startsWith('/visualization');
   const isLanding = location.pathname === '/home';
   const isGame = location.pathname.startsWith('/game');
 
@@ -62,7 +62,7 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible, ha
     headerTitle = "Balance Sheet Breakdown";
   }
 
-  // Define styles for enabled and disabled nav buttons
+  // Define styles for enabled nav buttons
   const enabledButtonStyle = {
     background: 'var(--truist-purple)',
     color: '#fff',
@@ -70,14 +70,6 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible, ha
     padding: '0.6rem 1.2rem',
     borderRadius: '5px',
     cursor: 'pointer'
-  };
-  const disabledButtonStyle = {
-    background: '#ccc',
-    color: '#666',
-    border: 'none',
-    padding: '0.6rem 1.2rem',
-    borderRadius: '5px',
-    cursor: 'not-allowed'
   };
 
   // Render nav buttons only when in Analysis or Game sections.
@@ -90,40 +82,23 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible, ha
         </Link>
         {visualizationAccessible ? (
           <Link to="/visualization" style={{ textDecoration: 'none' }}>
-            {visualizationAccessible ? (
-  <Link to="/visualization" style={{ textDecoration: 'none' }}>
-    <button 
-      style={enabledButtonStyle}
-      onClick={() => {
-        // Recalculate the flattened balance sheet array and store it
-        const allBalanceSheets = getAllBalanceSheets(companies);
-        localStorage.setItem("allBalanceSheets", JSON.stringify(allBalanceSheets));
-      }}
-    >
-      Visualization
-      </button>
-    </Link>
-  ) : (
-    <button style={disabledButtonStyle} disabled>
-      Visualization
-    </button>
-  )}
-
+            <button 
+              style={enabledButtonStyle}
+              onClick={() => {
+                // Recalculate the flattened balance sheet array and store it
+                const allBalanceSheets = getAllBalanceSheets(companies);
+                localStorage.setItem("allBalanceSheets", JSON.stringify(allBalanceSheets));
+              }}
+            >
+              Visualization
+            </button>
           </Link>
         ) : (
-          <button style={disabledButtonStyle} disabled>
+          <button style={{ ...enabledButtonStyle, background: '#ccc', cursor: 'not-allowed' }} disabled>
             Visualization
           </button>
         )}
-        {summaryAccessible ? (
-          <Link to="/summary" style={{ textDecoration: 'none' }}>
-            <button style={enabledButtonStyle}>Summary</button>
-          </Link>
-        ) : (
-          <button style={disabledButtonStyle} disabled>
-            Summary
-          </button>
-        )}
+        {/* The Summary button has been removed */}
       </div>
     );
   } else if (isGame) {
@@ -255,7 +230,7 @@ const App = () => {
   // NAVIGATION / VISUALIZATION ACCESS STATE
   // ------------------------------
   const [visualizationAccessible, setVisualizationAccessible] = useState(false);
-  const [summaryAccessible, setSummaryAccessible] = useState(false);
+  // Removed summaryAccessible state
 
   // ------------------------------
   // HANDLER FUNCTIONS
@@ -270,13 +245,13 @@ const App = () => {
         setCompanies(parsedData.companies || getInitialCompanies());
         setCurrentCompanyId(parsedData.currentCompanyId || 1);
         setVisualizationAccessible(parsedData.visualizationAccessible || false);
-        setSummaryAccessible(parsedData.summaryAccessible || false);
+        // Removed summaryAccessible restore.
       } else {
         // No stored data for this user; reset state to defaults.
         setCompanies(getInitialCompanies());
         setCurrentCompanyId(1);
         setVisualizationAccessible(false);
-        setSummaryAccessible(false);
+        // Removed summaryAccessible reset.
       }
       setCurrentUser(username);
     } else {
@@ -294,7 +269,7 @@ const App = () => {
       setCompanies(getInitialCompanies());
       setCurrentCompanyId(1);
       setVisualizationAccessible(false);
-      setSummaryAccessible(false);
+      // Removed summaryAccessible initialization.
       setCurrentUser(username);
     }
   };
@@ -305,7 +280,7 @@ const App = () => {
       companies,
       currentCompanyId,
       visualizationAccessible,
-      summaryAccessible,
+      // Removed summaryAccessible.
       // Additional state (e.g., game progress) can be added here.
     };
     localStorage.setItem(`userData-${currentUser}`, JSON.stringify(dataToSave));
@@ -410,7 +385,7 @@ const App = () => {
       return;
     }
     const newId = currentCompany.sheets.length
-    ? Math.max(...currentCompany.sheets.map((s) => Number(s.id.split('-')[1]))) + 1
+      ? Math.max(...currentCompany.sheets.map((s) => Number(s.id.split('-')[1]))) + 1
       : 1;
     const newSheet = defaultBalanceSheet(newId, newYear, currentCompany.name);
     const updatedSheets = [...currentCompany.sheets, newSheet];
@@ -465,7 +440,7 @@ const App = () => {
   };
 
   // ------------------------------
-  // SHEETS PAGE COMPONENT (Updated NEXT Button Handler with Validation Modal)
+  // SHEETS PAGE COMPONENT
   // ------------------------------
   const SheetsPage = () => {
     const navigate = useNavigate();
@@ -738,8 +713,8 @@ const App = () => {
   // MAIN RENDER (Always wrapped in <Router>)
   // ------------------------------
   return (
-  <Provider store={store}> {/* Redux Store 연결 */}
-      <PersistGate loading={<div>Loading...</div>} persistor={persistor}> {/* Persist Store 연결 */}
+    <Provider store={store}>
+      <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
         <Router>
           <Routes>
             {/* When not logged in, render the LoginPage and redirect all paths to "/login" */}
@@ -758,10 +733,9 @@ const App = () => {
                   <AppLayout
                     currentUser={currentUser}
                     visualizationAccessible={visualizationAccessible}
-                    summaryAccessible={summaryAccessible}
                     handleLogout={handleLogout}
                     companies={companies}
-              />
+                  />
                 }
               >
                 <Route path="/home" element={<LandingScreen />} />
@@ -770,22 +744,13 @@ const App = () => {
                   path="/visualization"
                   element={
                     visualizationAccessible ? (
-                      <VisualizationPage onNext={() => { setSummaryAccessible(true); }} />
+                      <VisualizationPage />
                     ) : (
                       <Navigate to="/sheets" replace />
                     )
                   }
                 />
-                <Route
-                  path="/summary"
-                  element={
-                    summaryAccessible ? (
-                      <SummaryPage />
-                    ) : (
-                      <Navigate to="/sheets" replace />
-                    )
-                  }
-                />
+                {/* Removed Summary route */}
                 <Route path="/game/*" element={<GameScreen />}>
                   <Route path="progress" element={<GameProgress />} />
                   <Route path="play" element={<GamePlay />} />
