@@ -15,13 +15,13 @@ const GameProgress = () => {
     try {
       dispatch(fetchProblemsStart());
       const problems = await getRandomProblems(day);
-      console.log("📌 API 응답 데이터:", problems);
+      console.log("📌 API response data:", problems);
       dispatch(fetchProblemsSuccess(problems));
       navigate("/game/play");
     } catch (error) {
       dispatch(fetchProblemsFailure(error.message));
-      console.error("❌ API 호출 실패:", error);
-      alert("문제를 불러오지 못했습니다. 다시 시도해주세요.");
+      console.error("❌ API call failed:", error);
+      alert("Failed to load problems. Please try again.");
     }
   };
 
