@@ -39,7 +39,7 @@ Follow these steps to get everything running smoothly!
 
 ---
 
-### **1️⃣ Clone & Run the Frontend**  
+1. ** Clone & Run the Frontend**  
 ```sh
 git clone https://github.com/lukasp-dev/ugaHacks.git
 cd ugaHacks
@@ -50,7 +50,7 @@ Your frontend will be live at **http://localhost:5173** 🎉
 
 ---
 
-### **2️⃣ Retrieve the Secret Sauce (.env) for Backend**  
+2. ** Retrieve the Secret Sauce (.env) for Backend**  
 Head over to **[this secret vault](https://send.bitwarden.com/#xgNiTrXvF0CZVrJ_AMKM-Q/NsdjiLz8ip6hpn-SPw_mtg)** 🔐  
 - You’ll need a **magic word** to unlock it 🧙‍♂️  
 - Think **"the name of this hackathon"**, all lowercase 😉
@@ -60,7 +60,7 @@ Once inside, copy the **.env** file contents.
 
 ---
 
-### **3️⃣ Clone & Run the Backend**  
+3. ** Clone & Run the Backend**  
 ```sh
 git clone https://github.com/lukasp-dev/FinCompare.git
 cd FinCompare
