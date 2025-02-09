@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setFinancialData } from "../store/financialDataSlice";
+import {setFinancialData} from "../store/financialDataSlice";
+import { processFinancialData } from "../api/processData";
 
 import Chart from "chart.js/auto";
 
@@ -161,7 +162,7 @@ const formatLabel = (label) => {
 
 const VisualizationPage = () => {
   const dispatch = useDispatch();
-  const financialData = useSelector((state) => state.financialData.data);
+  const financialData = useSelector((state) => state.financialData?.data ?? []);
 
   const balanceCompRef = useRef(null);
   const incomeCompRef = useRef(null);
@@ -186,14 +187,31 @@ const VisualizationPage = () => {
   const [ebitdaData, setEbitdaData] = useState([]);
 
   useEffect(() => {
-    // localStorage에서 데이터 가져오기
-    const allBalanceSheets = localStorage.getItem("all-balance-sheets");
-    if (allBalanceSheets) {
-      const parsedData = JSON.parse(allBalanceSheets);
-      // 리덕스 스토어 업데이트
-      dispatch(setFinancialData(parsedData));
-    }
+    const fetchData = async () => {
+      const allBalanceSheets = localStorage.getItem("allBalanceSheets");
+      if (allBalanceSheets) {
+        const parsedData = JSON.parse(allBalanceSheets);
+        console.log("Parsed Data from localStorage:", parsedData);
+        
+        try {
+          const processedData = await processFinancialData(parsedData);
+          console.log("Processed Financial Data:", processedData);
+          dispatch(setFinancialData(processedData));
+        } catch (error) {
+          console.error("Error processing financial data:", error);
+        }
+      } else {
+        console.log("No data found in localStorage for 'all-balance-sheets'");
+      }
+    };
+
+    fetchData();
   }, [dispatch]);
+
+  useEffect(() => {
+    console.log("Financial Data from Redux has changed:", financialData);
+  }, [financialData]);
+  
 
   useEffect(() => {
     setFinancialRatios(calculateFinancialRatios(companies));
