@@ -1,6 +1,6 @@
 import api from "./axiosInstance";
-import { setFinancialData } from "./financialDataSlice";
-import { store } from "./store";
+import { setFinancialData } from "../store/financialDataSlice";
+import { store } from "../store/store";
 
 export const processFinancialData = async (data) => {
   try {
