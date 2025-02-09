@@ -349,7 +349,9 @@
   }
 
   #fileInput {
-    display: none;
+    opacity: 0;
+    position: absolute;
+    left: -9999px;
   }
 
   /* --- Overall Balance Separator --- */
