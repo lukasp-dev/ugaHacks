@@ -52,20 +52,6 @@ const BalanceSheetsPage = ({ companies, onUpdateCompanies, onNext }) => {
     // Your implementation here: e.g., add a new sheet object to the corresponding company.
   };
 
-  // When the user clicks the NEXT button, flatten all sheets from all companies.
-  const handleNext = () => {
-    console.log("NEXT button clicked.");
-    // Use the helper function to create a single flat array.
-    const allBalanceSheets = getAllBalanceSheets(companies);
-    console.log("Flattened balance sheets array:", allBalanceSheets);
-
-    // Optionally, store the array in localStorage (or elsewhere) for later use.
-    localStorage.setItem("allBalanceSheets", JSON.stringify(allBalanceSheets));
-
-    // Call the onNext callback and pass the flattened array.
-    onNext(allBalanceSheets);
-  };
-
   return (
     <div style={{ padding: '1rem' }}>
       <h2>Balance Sheets</h2>

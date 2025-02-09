@@ -13,7 +13,7 @@ import {
 import BalanceSheetForm from './components/BalanceSheetForm';
 import ValidationModal from './components/ValidationModal';
 import { defaultBalanceSheet } from './utils/balanceSheetUtils';
-import { getAllBalanceSheets } from './utils/sheetHelpers'; // <-- Added import
+import { getAllBalanceSheets } from './utils/sheetHelpers';
 import TruistLogo from './assets/truist-logo.png';
 import LoginPage from './components/LoginPage';
 import VisualizationPage from './components/VisualizationPage';
@@ -444,19 +444,86 @@ const App = () => {
   };
 
   // ------------------------------
-  // SHEETS PAGE COMPONENT (Updated NEXT Button Handler)
+  // SHEETS PAGE COMPONENT (Updated NEXT Button Handler with Validation Modal)
   // ------------------------------
   const SheetsPage = () => {
     const navigate = useNavigate();
 
-    const handleNextAndCompare = () => {
-      console.log("NEXT button clicked");
+    // Helper function to validate each balance sheet for zero values.
+    const getValidationErrors = () => {
+      const errors = [];
+      currentCompany.sheets.forEach((sheet) => {
+        const sheetYear = sheet.year;
+        // Check assets
+        Object.keys(sheet.assets).forEach((category) => {
+          Object.keys(sheet.assets[category]).forEach((field) => {
+            if (Number(sheet.assets[category][field]) === 0) {
+              errors.push({
+                fieldId: `sheet-${sheet.id}.assets.${category}.${field}`,
+                sheetYear,
+                location: `assets > ${category}`
+              });
+            }
+          });
+        });
+        // Check liabilities
+        Object.keys(sheet.liabilities).forEach((category) => {
+          Object.keys(sheet.liabilities[category]).forEach((field) => {
+            if (Number(sheet.liabilities[category][field]) === 0) {
+              errors.push({
+                fieldId: `sheet-${sheet.id}.liabilities.${category}.${field}`,
+                sheetYear,
+                location: `liabilities > ${category}`
+              });
+            }
+          });
+        });
+        // Check equity
+        Object.keys(sheet.equity).forEach((category) => {
+          Object.keys(sheet.equity[category]).forEach((field) => {
+            if (Number(sheet.equity[category][field]) === 0) {
+              errors.push({
+                fieldId: `sheet-${sheet.id}.equity.${category}.${field}`,
+                sheetYear,
+                location: `equity > ${category}`
+              });
+            }
+          });
+        });
+        // Check extra numeric fields
+        ['income', 'revenue', 'profit', 'operatingIncome', 'netIncome', 'interestExpense', 'incomeTaxes', 'depreciation', 'amortization'].forEach((field) => {
+          if (Number(sheet[field]) === 0) {
+            errors.push({
+              fieldId: `sheet-${sheet.id}.${field}`,
+              sheetYear,
+              location: field
+            });
+          }
+        });
+      });
+      return errors;
+    };
+
+    const proceedWithNext = () => {
+      console.log("Proceeding to next step");
       const allBalanceSheets = getAllBalanceSheets(companies);
       console.log("Flattened balance sheets array:", allBalanceSheets);
       localStorage.setItem("allBalanceSheets", JSON.stringify(allBalanceSheets));
-      // Unlock navigation to Visualization and navigate
       setVisualizationAccessible(true);
       navigate('/visualization');
+    };
+
+    const handleNextAndCompare = () => {
+      console.log("NEXT button clicked");
+      const errors = getValidationErrors();
+      console.log("Validation errors:", errors);
+      if (errors.length > 0) {
+        tempErrorsRef.current = errors;
+        setPendingAction(() => proceedWithNext);
+        setShowModal(true);
+      } else {
+        proceedWithNext();
+      }
     };
 
     return (
@@ -481,11 +548,13 @@ const App = () => {
                           return {
                             ...c,
                             name: editingCompanyName,
-                            sheets: c.sheets.map(sheet => ({
+                            sheets: c.sheets.map((sheet) => ({
                               ...sheet,
                               name: editingCompanyName,
-                              identifier: editingCompanyName ? `${editingCompanyName}-${sheet.year}` : sheet.year,
-                            }))
+                              identifier: editingCompanyName
+                                ? `${editingCompanyName}-${sheet.year}`
+                                : sheet.year,
+                            })),
                           };
                         }
                         return c;
@@ -501,11 +570,13 @@ const App = () => {
                             return {
                               ...c,
                               name: editingCompanyName,
-                              sheets: c.sheets.map(sheet => ({
+                              sheets: c.sheets.map((sheet) => ({
                                 ...sheet,
                                 name: editingCompanyName,
-                                identifier: editingCompanyName ? `${editingCompanyName}-${sheet.year}` : sheet.year,
-                              }))
+                                identifier: editingCompanyName
+                                  ? `${editingCompanyName}-${sheet.year}`
+                                  : sheet.year,
+                              })),
                             };
                           }
                           return c;
@@ -516,8 +587,23 @@ const App = () => {
                   }}
                   style={
                     company.id === currentCompanyId
-                      ? { padding: '0.5rem 1rem', backgroundColor: '#EBF5FB', border: '1px solid #AED6F1', fontWeight: 'bold', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
-                      : { padding: '0.5rem 1rem', backgroundColor: '#F8F9F9', border: '1px solid #ccc', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
+                      ? {
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#EBF5FB',
+                          border: '1px solid #AED6F1',
+                          fontWeight: 'bold',
+                          width: '100%',
+                          textAlign: 'left',
+                          marginBottom: '0.5rem',
+                        }
+                      : {
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#F8F9F9',
+                          border: '1px solid #ccc',
+                          width: '100%',
+                          textAlign: 'left',
+                          marginBottom: '0.5rem',
+                        }
                   }
                   autoFocus
                 />
@@ -525,8 +611,23 @@ const App = () => {
                 <button
                   style={
                     company.id === currentCompanyId
-                      ? { padding: '0.5rem 1rem', backgroundColor: '#EBF5FB', border: '1px solid #AED6F1', fontWeight: 'bold', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
-                      : { padding: '0.5rem 1rem', backgroundColor: '#F8F9F9', border: '1px solid #ccc', width: '100%', textAlign: 'left', marginBottom: '0.5rem' }
+                      ? {
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#EBF5FB',
+                          border: '1px solid #AED6F1',
+                          fontWeight: 'bold',
+                          width: '100%',
+                          textAlign: 'left',
+                          marginBottom: '0.5rem',
+                        }
+                      : {
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#F8F9F9',
+                          border: '1px solid #ccc',
+                          width: '100%',
+                          textAlign: 'left',
+                          marginBottom: '0.5rem',
+                        }
                   }
                   onClick={() => setCurrentCompanyId(company.id)}
                   onDoubleClick={() => {
@@ -565,7 +666,17 @@ const App = () => {
               {companies.length < 5 && (
                 <button
                   className="btn-add-company"
-                  style={{ padding: '0.75rem 1.5rem', backgroundColor: '#D6EAF8', color: '#154360', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '1rem', margin: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    backgroundColor: '#D6EAF8',
+                    color: '#154360',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    margin: '0.5rem',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  }}
                   onClick={handleAddCompany}
                 >
                   ADD COMPANY
@@ -573,7 +684,17 @@ const App = () => {
               )}
               <button
                 className="btn-compare-data"
-                style={{ padding: '0.75rem 1.5rem', backgroundColor: '#D5F5E3', color: '#1E8449', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '1rem', margin: '0.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  backgroundColor: '#D5F5E3',
+                  color: '#1E8449',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  margin: '0.5rem',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                }}
                 onClick={handleNextAndCompare}
               >
                 NEXT
@@ -625,7 +746,9 @@ const App = () => {
               path="/visualization"
               element={
                 visualizationAccessible ? (
-                  <VisualizationPage onNext={() => { setSummaryAccessible(true); }} />
+                  <VisualizationPage onNext={() => {
+                    setSummaryAccessible(true);
+                  }} />
                 ) : (
                   <Navigate to="/sheets" replace />
                 )
