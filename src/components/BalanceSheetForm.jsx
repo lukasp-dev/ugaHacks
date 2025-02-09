@@ -15,10 +15,14 @@ const BalanceSheetForm = ({
   const [collapsed, setCollapsed] = useState(false);
   const fileInputRef = useRef();
 
-  const handleDrop = (e) => {
+  // Handles file drops from drag & drop
+  const handleDrop = async (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
     console.log('Dropped files:', files);
+    if (files && files.length > 0) {
+      await handleFileUpload(files[0]);
+    }
   };
 
   const handleDragOver = (e) => e.preventDefault();
@@ -28,9 +32,58 @@ const BalanceSheetForm = ({
     fileInputRef.current.click();
   };
 
-  const handleFileInputChange = (e) => {
+  // Updated file input handler: Uploads the file and then triggers backend analysis.
+  const handleFileInputChange = async (e) => {
     const files = e.target.files;
     console.log('Selected files:', files);
+    if (files && files.length > 0) {
+      await handleFileUpload(files[0]);
+    }
+  };
+
+  // This function handles the file upload and then calls the analysis endpoint.
+  const handleFileUpload = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      // Step 1: Upload the file to your backend upload endpoint.
+      const uploadResponse = await fetch("http://localhost:8080/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const uploadData = await uploadResponse.json();
+      console.log("Upload result:", uploadData);
+
+      if (!uploadData.fileUrl) {
+        console.error("File upload failed.");
+        return;
+      }
+
+      // Step 2: Trigger analysis on the uploaded file by sending its URL to your analysis endpoint.
+      const analysisResponse = await fetch("http://localhost:8080/api/analyzeFileUrl", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ fileUrl: uploadData.fileUrl }),
+      });
+      const analysisData = await analysisResponse.json();
+      console.log("Analysis result:", analysisData);
+
+      // Step 3: If analysis returns balanceSheetData, update the current sheet.
+      if (analysisData && analysisData.balanceSheetData) {
+        // Merge the parsed data with the current sheet.
+        // Note: This assumes the returned structure matches your defaultBalanceSheet structure.
+        const updatedSheet = {
+          ...sheet,
+          ...analysisData.balanceSheetData,
+        };
+        onUpdate(updatedSheet);
+      }
+    } catch (err) {
+      console.error("Error during file upload or analysis:", err);
+    }
   };
 
   const updateField = (section, subSection, field, newValue) => {
