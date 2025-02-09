@@ -10,6 +10,9 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router-dom';
+import { Provider } from "react-redux"; 
+import { PersistGate } from "redux-persist/integration/react"; 
+import { store, persistor } from "./store/store";
 import BalanceSheetForm from './components/BalanceSheetForm';
 import ValidationModal from './components/ValidationModal';
 import { defaultBalanceSheet } from './utils/balanceSheetUtils';
@@ -21,7 +24,7 @@ import SummaryPage from './components/SummaryPage';
 import LandingScreen from './components/LandingScreen';
 import GameScreen from './components/GameScreen';
 import GameProgress from './components/GameProgress';
-import GamePlay from './components/GamePlay2';
+import GamePlay from './components/GamePlay';
 import GameEnd from './components/GameEnd';
 
 // Helper function to create a fresh copy of the default companies data.
@@ -735,64 +738,66 @@ const App = () => {
   // MAIN RENDER (Always wrapped in <Router>)
   // ------------------------------
   return (
-    <Router>
-      <Routes>
-        {/* When not logged in, render the LoginPage and redirect all paths to "/login" */}
-        {!currentUser ? (
-          <>
-            <Route
-              path="/login"
-              element={<LoginPage onLogin={handleLogin} onSignUp={handleSignUp} />}
-            />
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </>
-        ) : (
-          // When logged in, render the protected routes inside the AppLayout.
-          <Route
-            element={
-              <AppLayout
-                currentUser={currentUser}
-                visualizationAccessible={visualizationAccessible}
-                summaryAccessible={summaryAccessible}
-                handleLogout={handleLogout}
-                companies={companies}
+  <Provider store={store}> {/* Redux Store 연결 */}
+      <PersistGate loading={<div>Loading...</div>} persistor={persistor}> {/* Persist Store 연결 */}
+        <Router>
+          <Routes>
+            {/* When not logged in, render the LoginPage and redirect all paths to "/login" */}
+            {!currentUser ? (
+              <>
+                <Route
+                  path="/login"
+                  element={<LoginPage onLogin={handleLogin} onSignUp={handleSignUp} />}
+                />
+                <Route path="*" element={<Navigate to="/login" replace />} />
+              </>
+            ) : (
+              // When logged in, render the protected routes inside the AppLayout.
+              <Route
+                element={
+                  <AppLayout
+                    currentUser={currentUser}
+                    visualizationAccessible={visualizationAccessible}
+                    summaryAccessible={summaryAccessible}
+                    handleLogout={handleLogout}
+                    companies={companies}
               />
-            }
-          >
-            <Route path="/home" element={<LandingScreen />} />
-            <Route path="/sheets" element={<SheetsPage />} />
-            <Route
-              path="/visualization"
-              element={
-                visualizationAccessible ? (
-                  <VisualizationPage onNext={() => {
-                    setSummaryAccessible(true);
-                  }} />
-                ) : (
-                  <Navigate to="/sheets" replace />
-                )
-              }
-            />
-            <Route
-              path="/summary"
-              element={
-                summaryAccessible ? (
-                  <SummaryPage />
-                ) : (
-                  <Navigate to="/sheets" replace />
-                )
-              }
-            />
-            <Route path="/game/*" element={<GameScreen />}>
-              <Route path="progress" element={<GameProgress />} />
-              <Route path="play" element={<GamePlay />} />
-              <Route index element={<GamePlay />} />
-            </Route>
-            <Route path="*" element={<Navigate to="/home" replace />} />
-          </Route>
-        )}
-      </Routes>
-    </Router>
+                }
+              >
+                <Route path="/home" element={<LandingScreen />} />
+                <Route path="/sheets" element={<SheetsPage />} />
+                <Route
+                  path="/visualization"
+                  element={
+                    visualizationAccessible ? (
+                      <VisualizationPage onNext={() => { setSummaryAccessible(true); }} />
+                    ) : (
+                      <Navigate to="/sheets" replace />
+                    )
+                  }
+                />
+                <Route
+                  path="/summary"
+                  element={
+                    summaryAccessible ? (
+                      <SummaryPage />
+                    ) : (
+                      <Navigate to="/sheets" replace />
+                    )
+                  }
+                />
+                <Route path="/game/*" element={<GameScreen />}>
+                  <Route path="progress" element={<GameProgress />} />
+                  <Route path="play" element={<GamePlay />} />
+                  <Route index element={<GamePlay />} />
+                </Route>
+                <Route path="*" element={<Navigate to="/home" replace />} />
+              </Route>
+            )}
+          </Routes>
+        </Router>
+      </PersistGate>
+    </Provider>
   );
 };
 
