@@ -1,0 +1,90 @@
+/* Overall container with a dark background */
+.container {
+    background: #121212;
+    padding: 2rem;
+    min-height: calc(100vh - 121px);
+    display: flex;
+    flex-direction: column; /* Stacks content vertically */
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Content area with a slightly lighter dark background and soft shadow */
+  .content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    max-width: 1000px;
+    width: 100%;
+    background: #1e1e1e;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+    padding: 2rem;
+  }
+  
+  /* Text styles with white color */
+  .text {
+    flex: 1;
+    color: #ffffff;
+  }
+  
+  .text h2 {
+    margin-bottom: 1rem;
+    color: #f1c40f; /* Bright yellow for headings */
+  }
+  
+  .text p,
+  .text ul {
+    line-height: 1.4; /* Reduced line spacing */
+    font-size: 1.1rem;
+  }
+  
+  .text ul {
+    margin-left: 1.5rem;
+  }
+  
+  /* Styling for Truist Financial (changed from blue to orange) */
+  .truist {
+    color: #e67e22; /* Orange */
+    font-weight: bold;
+  }
+  
+  /* Styling for the hackathon name */
+  .hackathon {
+    color: #27ae60; /* Vibrant green */
+    font-weight: bold;
+  }
+  
+  /* Styling for 'balance' & 'income' statements (lighter red) */
+  .statement {
+    color: #e57373; /* Lighter red */
+    font-weight: bold;
+  }
+  
+  /* Style for the dancing emoji replacing the image */
+  .dancingEmoji {
+    font-size: 8rem;
+    display: block;
+    text-align: center;
+  }
+  
+  /* Horizontal box for creator info */
+  .creatorInfo {
+    max-width: 1000px;
+    width: 100%;
+    background: #1e1e1e;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+    font-size: 1rem;
+    text-align: center;
+  }
+  
+  /* Color the bolded text within the features list */
+  .text ul li strong {
+    color: #f1c40f; /* Bright yellow */
+  }
+  

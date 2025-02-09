@@ -20,13 +20,11 @@ import { getAllBalanceSheets } from './utils/sheetHelpers';
 import TruistLogo from './assets/truist-logo.png';
 import LoginPage from './components/LoginPage';
 import VisualizationPage from './components/VisualizationPage';
-// Removed SummaryPage import since it's no longer used.
-// import SummaryPage from './components/SummaryPage';
+import AboutPage from './components/AboutPage';
 import LandingScreen from './components/LandingScreen';
 import GameScreen from './components/GameScreen';
 import GameProgress from './components/GameProgress';
 import GamePlay from './components/GamePlay';
-import GameEnd from './components/GameEnd';
 import { useDispatch } from 'react-redux';
 import { reset } from './store/dateSlice';
 
@@ -58,7 +56,7 @@ const AppLayout = ({ currentUser, visualizationAccessible, handleLogout, compani
   if (isAnalysis) {
     headerTitle = "Balance Sheet Breakdown";
   } else if (isLanding) {
-    headerTitle = "Menu";
+    headerTitle = "FinCompare";
   } else if (isGame) {
     headerTitle = "Game";
   } else {
@@ -758,7 +756,7 @@ const App = () => {
                     )
                   }
                 />
-                {/* Removed Summary route */}
+                <Route path="/about" element={<AboutPage />} />
                 <Route path="/game/*" element={<GameScreen />}>
                   <Route path="progress" element={<GameProgress />} />
                   <Route path="play" element={<GamePlay />} />

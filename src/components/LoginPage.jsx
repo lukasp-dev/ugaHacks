@@ -26,6 +26,25 @@ const LoginPage = ({ onLogin, onSignUp }) => {
     }
   };
 
+  const inputStyle = {
+    width: '100%',
+    padding: '0.5rem',
+    marginTop: '0.5rem',
+    boxSizing: 'border-box' // ensures padding is included in the width calculation
+  };
+
+  const buttonStyle = {
+    width: '100%',
+    padding: '0.75rem',
+    background: 'var(--truist-purple)',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    boxSizing: 'border-box' // optional, for consistency
+  };
+
   return (
     <div
       className="login-page"
@@ -57,11 +76,7 @@ const LoginPage = ({ onLogin, onSignUp }) => {
               type="text"
               value={username}
               onChange={e => setUsername(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.5rem',
-                marginTop: '0.5rem',
-              }}
+              style={inputStyle}
               required
             />
           </div>
@@ -72,11 +87,7 @@ const LoginPage = ({ onLogin, onSignUp }) => {
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.5rem',
-                marginTop: '0.5rem',
-              }}
+              style={inputStyle}
               required
             />
           </div>
@@ -88,27 +99,14 @@ const LoginPage = ({ onLogin, onSignUp }) => {
                 type="password"
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  marginTop: '0.5rem',
-                }}
+                style={inputStyle}
                 required
               />
             </div>
           )}
           <button
             type="submit"
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              background: 'var(--truist-purple)',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '1rem',
-            }}
+            style={buttonStyle}
           >
             {isSignUp ? "Sign Up" : "Log In"}
           </button>
