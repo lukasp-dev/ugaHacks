@@ -27,16 +27,24 @@ const Dropdown = ({
 
   return (
     <div className={`dropdown ${open ? 'open' : ''}`}>
-      <div className="dropdown-header" onClick={toggleOpen}>
+      <div className="dropdown-header">
         <span className="dropdown-title">{title}</span>
         <span className="dropdown-total">${total.toLocaleString()}</span>
-        <span className="dropdown-toggle">{open ? '-' : '+'}</span>
+        {/* Only clicking the toggle icon will open/close the dropdown */}
+        <span 
+          className="dropdown-toggle" 
+          onClick={(e) => { 
+            e.stopPropagation(); 
+            toggleOpen(); 
+          }}
+        >
+          {open ? '-' : '+'}
+        </span>
       </div>
-      <div className="dropdown-content">
+      <div className="dropdown-content" onClick={(e) => e.stopPropagation()}>
         {Object.keys(fields).map((field, idx) => {
           const fieldId = `sheet-${sheetId}.${section}.${subSection}.${field}`;
-          const hasError =
-            validationErrors && validationErrors.includes(fieldId);
+          const hasError = validationErrors && validationErrors.includes(fieldId);
           return (
             <div
               key={idx}
