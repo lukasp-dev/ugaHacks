@@ -1,533 +1,578 @@
-  :root {
-    --truist-purple: #4B286D;
-    --truist-blue-light: #00549C;
-    --truist-teal: #4bc0c0;
-    --truist-pink: rgba(255, 99, 132, 0.6);
-    --truist-blue: rgba(54, 162, 235, 0.6);
-    --truist-border: #e0e0e0;
-    --truist-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
+:root {
+  --truist-purple: #4B286D;
+  --truist-blue-light: #00549C;
+  --truist-teal: #4bc0c0;
+  --truist-pink: rgba(255, 99, 132, 0.6);
+  --truist-blue: rgba(54, 162, 235, 0.6);
+  --truist-border: #e0e0e0;
+  --truist-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-  /* Page Background */
-  body {
-    margin: 0;
-    padding: 0;
-    background: #f2f2f2;
-    color: #333;
-    font-family: var(--truist-font);
-  }
+/* Page Background */
+body {
+  margin: 0;
+  padding: 0;
+  background: #f2f2f2;
+  color: #333;
+  font-family: var(--truist-font);
+}
 
-  /* --- Top Header --- */
-  .header {
-    display: flex;
-    align-items: center;
-    background-color: var(--truist-purple);
-    color: #fff;
-    padding: 0.3rem 1.5rem;
-    position: sticky;
-    top: 0;
-    z-index: 20;
-  }
+/* --- Top Header --- */
+.header {
+  display: flex;
+  align-items: center;
+  background-color: var(--truist-purple);
+  color: #fff;
+  padding: 0.3rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
 
-  .header .disco-emoji {
-    font-size: 1.6rem;
-    margin-right: 0.7rem;
-  }
+.header .disco-emoji {
+  font-size: 1.6rem;
+  margin-right: 0.7rem;
+}
 
-  .header h1 {
-    font-size: 1.4rem;
-    margin: 0;
-    font-weight: bold;
-  }
+.header h1 {
+  font-size: 1.4rem;
+  margin: 0;
+  font-weight: bold;
+}
 
-  /* --- Subheader --- */
-  .subheader {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #fff;
-    border-bottom: 1px solid var(--truist-border);
-    padding: 0.8rem 1.5rem;
-  }
+/* --- Subheader --- */
+.subheader {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  border-bottom: 1px solid var(--truist-border);
+  padding: 0.8rem 1.5rem;
+}
 
-  .subheader .logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.subheader .logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .subheader .logo img {
-    height: 50px;
-    max-height: 100%;
-    width: auto;
-  }
+.subheader .logo img {
+  height: 50px;
+  max-height: 100%;
+  width: auto;
+}
 
-  .nav-buttons {
-    display: flex;
-    gap: 1.5rem;
-  }
+.nav-buttons {
+  display: flex;
+  gap: 1.5rem;
+}
 
-  /* --- Nav Bar Buttons Styling --- */
-  .nav-buttons button {
-    background: var(--truist-purple);
-    color: #fff;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background 0.3s, transform 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
+/* --- Nav Bar Buttons Styling --- */
+.nav-buttons button {
+  background: var(--truist-purple);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-  .nav-buttons button:hover {
-    background: var(--truist-purple);
-    transform: scale(1.05);
-  }
+.nav-buttons button:hover {
+  background: var(--truist-purple);
+  transform: scale(1.05);
+}
 
-  /* --- Main Container --- */
-  .container {
-    max-width: 900px;
-    width: 100%;
-    margin: 1rem auto;
-    padding: 1rem;
-    background: transparent;
-  }
+/* --- Main Container --- */
+.container {
+  max-width: 900px;
+  width: 100%;
+  margin: 1rem auto;
+  padding: 1rem;
+  background: transparent;
+}
 
-  /* --- Balance Sheet Card --- */
-  .balance-sheet {
-    background: #fff;
-    border: 1px solid var(--truist-border);
-    border-radius: 8px;
-    margin-bottom: 2rem;
-    padding: 1rem 1.5rem;
-    position: relative;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-  }
+/* --- Balance Sheet Card --- */
+.balance-sheet {
+  background: #fff;
+  border: 1px solid var(--truist-border);
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  padding: 1rem 1.5rem;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
 
-  .balance-sheet.collapsed {
-    padding: 0.5rem 1.5rem;
-  }
+.balance-sheet.collapsed {
+  padding: 0.5rem 1.5rem;
+}
 
-  .balance-sheet .card-header {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--truist-border);
-  }
+/* Animated collapse/expand for the main content */
+/* We use a fixed max-height on the expanded state so that the transition can occur */
+.balance-sheet .content {
+  overflow: hidden;
+  transition: max-height 0.8s ease-in-out;
+}
 
-  .balance-sheet .card-header h3 {
-    font-size: 1.4rem;
-    font-weight: bold;
-    margin: 0;
-  }
+/* Expanded state */
+.balance-sheet:not(.collapsed) .content {
+  max-height: 8000px; /* adjust this value as needed */
+}
 
-  .balance-sheet.collapsed .content {
-    display: none;
-  }
+/* Collapsed state */
+.balance-sheet.collapsed .content {
+  max-height: 0;
+}
 
-  /* --- Delete Sheet Button --- */
-  .delete-sheet-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: transparent;
-    border: none;
-    color: #888;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-  }
+/* --- Card Header --- */
+/* Removed the pointer cursor from the entire header */
+.balance-sheet .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Title on left, chevron on right */
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--truist-border);
+}
 
-  .delete-sheet-button:hover {
-    color: red;
-    background: rgba(255, 0, 0, 0.1);
-    border-radius: 50%;
-  }
+.balance-sheet .card-header h3 {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin: 0;
+}
 
-  /* --- Data Display --- */
-  .data-display {
-    background: #f9fbfd;
-    padding: 1rem;
-    border: 1px solid var(--truist-border);
-    border-radius: 8px;
-    margin: 1rem 0;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  }
+/* --- Collapse Toggle (Chevron Button) --- */
+.collapse-toggle {
+  background: none;
+  border: none;
+  cursor: pointer; /* Only the chevron is clickable now */
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  transition: transform 0.3s ease;
+}
 
-  .section-header {
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    position: relative;
-    color: #000;
-  }
+.collapse-toggle:hover {
+  transform: scale(1.1);
+}
 
-  .section-header .section-total {
-    position: absolute;
-    right: 1rem;
-    font-weight: bold;
-    font-size: 1.1rem;
-  }
+.collapse-toggle:focus {
+  outline: none;
+}
 
-  .assets .section-header {
-    background-color: var(--truist-teal);
-  }
+/* --- Delete Sheet Button --- */
+.delete-sheet-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
 
-  .liabilities .section-header {
-    background-color: var(--truist-pink);
-  }
+.delete-sheet-button:hover {
+  color: red;
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 50%;
+}
 
-  .equity .section-header {
-    background-color: var(--truist-blue);
-  }
+/* --- Data Display --- */
+.data-display {
+  background: #f9fbfd;
+  padding: 1rem;
+  border: 1px solid var(--truist-border);
+  border-radius: 8px;
+  margin: 1rem 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
 
-  /* --- Dropdown --- */
-  .dropdown {
-    border: 1px solid var(--truist-border);
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    overflow: hidden;
-  }
+.section-header {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  position: relative;
+  color: #000;
+}
 
-  .dropdown-header {
-    background: #f0f0f0;
-    padding: 0.75rem 1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+.section-header .section-total {
+  position: absolute;
+  right: 1rem;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
 
-  .dropdown.open .dropdown-content {
-    display: block;
-  }
+.assets .section-header {
+  background-color: var(--truist-teal);
+}
 
-  .dropdown-title {
-    flex: 1;
-  }
+.liabilities .section-header {
+  background-color: var(--truist-pink);
+}
 
-  .dropdown-total {
-    margin: 0 1rem;
-    font-weight: bold;
-  }
+.equity .section-header {
+  background-color: var(--truist-blue);
+}
 
-  .dropdown-toggle {
-    width: 20px;
-    text-align: center;
-  }
+/* --- Dropdown --- */
+.dropdown {
+  border: 1px solid var(--truist-border);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
 
-  .dropdown-content {
-    display: none;
-    padding: 0.5rem 1rem;
-    background: #fff;
-  }
+.dropdown-header {
+  background: #f0f0f0;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  /* --- Editable Fields --- */
-  .editable-field {
-    cursor: pointer;
-    padding: 0.3rem 0.5rem;
-    border-radius: 4px;
-    transition: background 0.2s;
-    display: inline-block;
-  }
+.dropdown-title {
+  flex: 1;
+}
 
-  .editable-field:hover {
-    background: #e9ecef;
-  }
+.dropdown-total {
+  margin: 0 1rem;
+  font-weight: bold;
+}
 
-  .editable-field.error,
-  .editable-input.error {
-    background-color: rgba(255, 0, 0, 0.2);
-  }
+.dropdown-toggle {
+  width: 20px;
+  text-align: center;
+  cursor: pointer;
+}
 
-  .editable-input {
-    width: 100px;
-    padding: 0.2rem;
-    border: 1px solid var(--truist-border);
-    border-radius: 4px;
-    text-align: right;
-  }
+/* Animated dropdown content */
+.dropdown-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  padding: 0 1rem;
+  background: #fff;
+}
 
-  /* --- Add Year Button (Plus Button) --- */
-  .add-year-button {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--truist-blue-light);
-    border: none;
-    border-radius: 50%;
-    width: 30px;      
-    height: 30px;      
-    cursor: pointer;
-    color: #fff;
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    transition: transform 0.2s, background 0.2s;
-  }
+.dropdown.open .dropdown-content {
+  max-height: 500px; /* Adjust based on your content’s height */
+  padding: 0.5rem 1rem;
+}
 
-  .add-year-button:hover {
-    transform: translateX(-50%) scale(1.1);
-    background: var(--truist-purple);
-  }
+/* --- Editable Fields --- */
+.editable-field {
+  cursor: pointer;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: inline-block;
+}
 
-  /* Position the previous button (for adding an earlier year) at the top */
-  .add-year-button.previous {
-    top: -15px;
-  }
+.editable-field:hover {
+  background: #e9ecef;
+}
 
-  /* Position the next button (for adding a later year) at the bottom */
-  .add-year-button.next {
-    bottom: -15px;
-  }
+.editable-field.error,
+.editable-input.error {
+  background-color: rgba(255, 0, 0, 0.2);
+}
 
-  /* --- Plus Button for Empty Screen --- */
-  .empty-add-year-button {
-    background: var(--truist-blue-light);
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    cursor: pointer;
-    color: #fff;
-    font-size: 2.5rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    transition: transform 0.2s, background 0.2s;
-    margin: 1rem auto;
-  }
+.editable-input {
+  width: 100px;
+  padding: 0.2rem;
+  border: 1px solid var(--truist-border);
+  border-radius: 4px;
+  text-align: right;
+}
 
-  .empty-add-year-button:hover {
-    transform: scale(1.1);
-    background: var(--truist-purple);
-  }
+/* --- Add Year Button (Plus Button) --- */
+.add-year-button {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--truist-blue-light);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, background 0.2s;
+}
 
-  /* --- NEXT Button --- */
-  .next-button {
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    background: #2196F3;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    color: #fff;
-    transition: background 0.2s;
-  }
+.add-year-button:hover {
+  transform: translateX(-50%) scale(1.1);
+  background: var(--truist-purple);
+}
 
-  .next-button:hover {
-    background: #1976D2;
-  }
+/* Position the previous button (for adding an earlier year) at the top */
+.add-year-button.previous {
+  top: -15px;
+}
 
-  /* --- File Drop Area --- */
-  .droparea {
-    border: 2px dashed var(--truist-border);
-    border-radius: 8px;
-    padding: 1rem;
-    text-align: center;
-    margin-bottom: 1.5rem;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
+/* Position the next button (for adding a later year) at the bottom */
+.add-year-button.next {
+  bottom: -15px;
+}
 
-  .droparea:hover {
-    background: #e9ecef;
-  }
+/* --- Plus Button for Empty Screen --- */
+.empty-add-year-button {
+  background: var(--truist-blue-light);
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, background 0.2s;
+  margin: 1rem auto;
+}
 
-  .droparea i {
-    font-size: 2rem;
-    color: var(--truist-purple);
-  }
+.empty-add-year-button:hover {
+  transform: scale(1.1);
+  background: var(--truist-purple);
+}
 
-  #fileInput {
+/* --- NEXT Button --- */
+.next-button {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  background: #2196F3;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #fff;
+  transition: background 0.2s;
+}
+
+.next-button:hover {
+  background: #1976D2;
+}
+
+/* --- File Drop Area --- */
+.droparea {
+  border: 2px dashed var(--truist-border);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.droparea:hover {
+  background: #e9ecef;
+}
+
+.droparea i {
+  font-size: 2rem;
+  color: var(--truist-purple);
+}
+
+#fileInput {
+  opacity: 0;
+  position: absolute;
+  left: -9999px;
+}
+
+/* --- Overall Balance Separator --- */
+.balance-separator {
+  border-top: 2px solid #ccc;
+  margin: 1rem 0;
+  padding-top: 0.5rem;
+  text-align: right;
+}
+
+/* --- Extra Sections --- */
+.extra-sections {
+  margin: 1rem 0;
+}
+
+.extra-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--truist-border);
+  border-radius: 4px;
+  background-color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.extra-section label {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* --- Modal Styling --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
     opacity: 0;
-    position: absolute;
-    left: -9999px;
+    transform: scale(0.9);
   }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 
-  /* --- Overall Balance Separator --- */
-  .balance-separator {
-    border-top: 2px solid #ccc;
-    margin: 1rem 0;
-    padding-top: 0.5rem;
-    text-align: right;
-  }
+.modal h2 {
+  margin-top: 0;
+  font-size: 1.8rem;
+  color: var(--truist-purple);
+}
 
-  /* --- Extra Sections --- */
-  .extra-sections {
-    margin: 1rem 0;
-  }
+.modal p {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
 
-  .extra-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--truist-border);
-    border-radius: 4px;
-    background-color: #fff;
-    margin-bottom: 0.5rem;
-  }
+.modal-errors {
+  background: #f8f8f8;
+  border: 1px solid var(--truist-border);
+  border-radius: 4px;
+  padding: 1rem;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
 
-  .extra-section label {
-    font-weight: 600;
-    font-size: 1.1rem;
-  }
+.error-group {
+  margin-bottom: 1rem;
+}
 
-  /* --- Modal Styling --- */
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-  }
+.error-group-header {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
 
-  .modal {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    animation: fadeIn 0.3s ease-out;
-  }
+.error-row {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #ddd;
+}
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
+.error-row:last-child {
+  border-bottom: none;
+}
 
-  .modal h2 {
-    margin-top: 0;
-    font-size: 1.8rem;
-    color: var(--truist-purple);
-  }
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
 
-  .modal p {
-    font-size: 1rem;
-    margin-bottom: 1rem;
-  }
+.modal-btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
 
-  .modal-errors {
-    background: #f8f8f8;
-    border: 1px solid var(--truist-border);
-    border-radius: 4px;
-    padding: 1rem;
-    max-height: 200px;
-    overflow-y: auto;
-    margin-bottom: 1rem;
-  }
+.modal-btn.cancel {
+  background: #ccc;
+  color: #333;
+}
 
-  .error-group {
-    margin-bottom: 1rem;
-  }
+.modal-btn.cancel:hover {
+  background: #b3b3b3;
+}
 
-  .error-group-header {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-  }
+.modal-btn.confirm {
+  background: var(--truist-purple);
+  color: #fff;
+}
 
-  .error-row {
-    padding: 0.3rem 0;
-    border-bottom: 1px solid #ddd;
-  }
+.modal-btn.confirm:hover {
+  background: #3a2350;
+}
 
-  .error-row:last-child {
-    border-bottom: none;
-  }
+/* --- Company Header --- */
+.company-header {
+  text-align: center;
+  margin: 1rem 0;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
 
-  .modal-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-  }
+/* --- Main Layout --- */
+.main-layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
 
-  .modal-btn {
-    padding: 0.6rem 1.2rem;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
+/* --- Company Navigation Container --- */
+.company-nav-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem;
+  border: 1px solid var(--truist-border);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
 
-  .modal-btn.cancel {
-    background: #ccc;
-    color: #333;
-  }
+/* --- Company Content --- */
+.company-content {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 1rem;
+}
 
-  .modal-btn.cancel:hover {
-    background: #b3b3b3;
-  }
+/* --- Warning message for incorrect assets = liabilities + equity equation --- */
+.balance-warning {
+  margin-top: 0.5rem;
+  background-color: #ffcccc;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
 
-  .modal-btn.confirm {
-    background: var(--truist-purple);
-    color: #fff;
-  }
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 
-  .modal-btn.confirm:hover {
-    background: #3a2350;
-  }
-
-  /* --- Company Header --- */
-  .company-header {
-    text-align: center;
-    margin: 1rem 0;
-    font-size: 1.8rem;
-    font-weight: bold;
-  }
-
-  /* --- Main Layout --- */
-  .main-layout {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem;
-  }
-
-  /* --- Company Navigation Container --- */
-  .company-nav-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 1rem;
-    border: 1px solid var(--truist-border);
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  /* --- Company Content --- */
-  .company-content {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 1rem;
-  }
-
-  /* --- Warning message for incorrect assets = lilabilities + equity equation --- */
-  .balance-warning {
-    margin-top: 0.5rem;
-    background-color: #ffcccc;
-    padding: 0.5rem;
-    border-radius: 4px;
-  }
-  
+.fa.loading {
+  animation: spin 2s linear infinite;
+}

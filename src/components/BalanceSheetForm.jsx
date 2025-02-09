@@ -13,6 +13,7 @@ const BalanceSheetForm = ({
   onAddNext,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [loading, setLoading] = useState(false); // New loading state
   const fileInputRef = useRef();
 
   // File upload and drag-and-drop handlers:
@@ -43,6 +44,7 @@ const BalanceSheetForm = ({
   };
 
   const handleFileUpload = async (file) => {
+    setLoading(true); // Set loading to true before processing begins
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -79,6 +81,8 @@ const BalanceSheetForm = ({
       }
     } catch (err) {
       console.error("Error during file upload or analysis:", err);
+    } finally {
+      setLoading(false); // Reset loading after processing finishes
     }
   };
 
@@ -111,7 +115,7 @@ const BalanceSheetForm = ({
 
   return (
     <div className={`balance-sheet ${collapsed ? 'collapsed' : ''}`}>
-      {/* Editable Field for Year (instead of Company Name) */}
+      {/* Editable Field for Year */}
       <div className="sheet-year">
         <label>Year:</label>
         <EditableField
@@ -129,12 +133,25 @@ const BalanceSheetForm = ({
           fieldId={`sheet-${sheet.id}.year`}
         />
       </div>
-      {/* Card Header showing the balance sheet – clicking it toggles collapse */}
-      <div className="card-header" onClick={toggleCollapse}>
-        <h3>
-          Balance Sheet – {sheet.year}
-        </h3>
-        <i className={`fa ${collapsed ? 'fa-chevron-down' : 'fa-chevron-up'}`} />
+      {/* Card Header with animated chevron toggle on the right */}
+      <div className="card-header">
+        <h3>Balance Sheet – {sheet.year}</h3>
+        <button 
+          className="collapse-toggle" 
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleCollapse();
+          }}
+        >
+          {/* Always use the same icon and animate its rotation */}
+          <i 
+            className="fa fa-chevron-up" 
+            style={{ 
+              transition: 'transform 0.3s ease',
+              transform: collapsed ? 'rotate(180deg)' : 'rotate(0deg)' 
+            }} 
+          />
+        </button>
       </div>
       <button
         className="delete-sheet-button"
@@ -153,7 +170,8 @@ const BalanceSheetForm = ({
           onDragOver={handleDragOver}
           onClick={handleDropAreaClick}
         >
-          <i className="fa fa-upload" aria-hidden="true"></i>
+          {/* The upload icon gets the "loading" class if processing */}
+          <i className={`fa fa-upload ${loading ? 'loading' : ''}`} aria-hidden="true"></i>
           <p>Click or Drag &amp; Drop Files Here</p>
           <input
             type="file"

@@ -1,4 +1,3 @@
-// src/components/EditableField.jsx
 import React, { useState, useEffect } from 'react';
 
 const EditableField = ({
@@ -28,7 +27,6 @@ const EditableField = ({
     } else if (inputType === "year") {
       onChange(parseInt(localValue, 10));
     } else {
-      // For "text"
       onChange(localValue);
     }
   };
@@ -41,7 +39,7 @@ const EditableField = ({
       type={inputType === "number" || inputType === "year" ? "number" : "text"}
       value={localValue}
       onChange={handleChange}
-      onBlur={handleBlur}
+      onBlur={(e) => { e.stopPropagation(); handleBlur(); }}
       autoFocus
       onClick={(e) => e.stopPropagation()}
       onMouseDown={(e) => e.stopPropagation()}

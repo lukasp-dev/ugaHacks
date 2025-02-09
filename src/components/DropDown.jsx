@@ -1,4 +1,3 @@
-// src/components/Dropdown.jsx
 import React, { useState, useEffect } from 'react';
 import { sumValues } from '../utils/balanceSheetUtils';
 import EditableField from './EditableField';
@@ -27,12 +26,12 @@ const Dropdown = ({
 
   return (
     <div className={`dropdown ${open ? 'open' : ''}`}>
-      <div className="dropdown-header">
+      <div className="dropdown-header" style={{ cursor: 'default' }}>
         <span className="dropdown-title">{title}</span>
         <span className="dropdown-total">${total.toLocaleString()}</span>
-        {/* Only clicking the toggle icon will open/close the dropdown */}
         <span 
           className="dropdown-toggle" 
+          style={{ cursor: 'pointer' }}
           onClick={(e) => { 
             e.stopPropagation(); 
             toggleOpen(); 
