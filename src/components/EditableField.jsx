@@ -1,9 +1,15 @@
 // src/components/EditableField.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const EditableField = ({ value, onChange, isYear, fieldId, error }) => {
   const [editing, setEditing] = useState(false);
   const [localValue, setLocalValue] = useState(value);
+
+  // Update localValue whenever the incoming value prop changes.
+  useEffect(() => {
+    setLocalValue(value);
+    console.log(`EditableField ${fieldId} received new value:`, value);
+  }, [value, fieldId]);
 
   const handleClick = (e) => {
     e.stopPropagation();
@@ -12,6 +18,7 @@ const EditableField = ({ value, onChange, isYear, fieldId, error }) => {
 
   const handleBlur = () => {
     setEditing(false);
+    // Ensure we pass a number (or an integer if isYear) back to onChange.
     onChange(isYear ? parseInt(localValue, 10) : Number(localValue));
   };
 
@@ -27,11 +34,8 @@ const EditableField = ({ value, onChange, isYear, fieldId, error }) => {
       autoFocus
     />
   ) : (
-    <span
-      className={`editable-field ${error ? 'error' : ''}`}
-      onClick={handleClick}
-    >
-      {isYear ? localValue : `$${Number(value).toLocaleString()}`}
+    <span className={`editable-field ${error ? 'error' : ''}`} onClick={handleClick}>
+      {isYear ? localValue : `$${Number(localValue).toLocaleString()}`}
     </span>
   );
 };

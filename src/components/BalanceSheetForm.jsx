@@ -1,7 +1,8 @@
 // src/components/BalanceSheetForm.jsx
 import React, { useState, useRef } from 'react';
+import merge from 'lodash.merge';
 import EditableField from './EditableField';
-import Dropdown from './Dropdown'; // Updated import to match filename
+import Dropdown from './Dropdown';
 import { sumValues } from '../utils/balanceSheetUtils';
 
 const BalanceSheetForm = ({
@@ -9,13 +10,13 @@ const BalanceSheetForm = ({
   onUpdate,
   validationErrors,
   onDelete,
-  onAddPrevious, // For adding a previous year
-  onAddNext,     // For adding a next year
+  onAddPrevious,
+  onAddNext,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
   const fileInputRef = useRef();
 
-  // Handles file drops from drag & drop
+  // Handle file drop
   const handleDrop = async (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
@@ -32,7 +33,7 @@ const BalanceSheetForm = ({
     fileInputRef.current.click();
   };
 
-  // Updated file input handler: Uploads the file and then triggers backend analysis.
+  // File input change handler
   const handleFileInputChange = async (e) => {
     const files = e.target.files;
     console.log('Selected files:', files);
@@ -41,13 +42,16 @@ const BalanceSheetForm = ({
     }
   };
 
-  // This function handles the file upload and then calls the analysis endpoint.
+  // Updated handleFileUpload:
+  // • Uses lodash.merge for a deep merge
+  // • Assumes GPT returns a "name" field directly (no mapping from "id")
+  // • Recalculates the identifier as `${name}-${year}`
   const handleFileUpload = async (file) => {
     try {
       const formData = new FormData();
       formData.append("file", file);
 
-      // Step 1: Upload the file to your backend upload endpoint.
+      // Step 1: Upload file
       const uploadResponse = await fetch("http://localhost:8080/api/upload", {
         method: "POST",
         body: formData,
@@ -60,25 +64,23 @@ const BalanceSheetForm = ({
         return;
       }
 
-      // Step 2: Trigger analysis on the uploaded file by sending its URL to your analysis endpoint.
+      // Step 2: Trigger analysis
       const analysisResponse = await fetch("http://localhost:8080/api/analyzeFileUrl", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fileUrl: uploadData.fileUrl }),
       });
       const analysisData = await analysisResponse.json();
       console.log("Analysis result:", analysisData);
 
-      // Step 3: If analysis returns balanceSheetData, update the current sheet.
+      // Step 3: Merge the returned data with the current sheet.
       if (analysisData && analysisData.balanceSheetData) {
-        // Merge the parsed data with the current sheet.
-        // Note: This assumes the returned structure matches your defaultBalanceSheet structure.
-        const updatedSheet = {
-          ...sheet,
-          ...analysisData.balanceSheetData,
-        };
+        const newData = analysisData.balanceSheetData;
+        // Deep merge using lodash.merge (assuming newData contains "name")
+        const updatedSheet = merge({}, sheet, newData);
+        // Recalculate the identifier as "name-year"
+        updatedSheet.identifier = `${updatedSheet.name}-${updatedSheet.year}`;
+        console.log("Merged balance sheet object:", updatedSheet);
         onUpdate(updatedSheet);
       }
     } catch (err) {
@@ -110,27 +112,27 @@ const BalanceSheetForm = ({
 
   return (
     <div className={`balance-sheet ${collapsed ? 'collapsed' : ''}`}>
-      {/* Previous Year Button */}
-      <button
-        className="add-year-button previous"
-        onClick={(e) => {
-          e.stopPropagation();
-          onAddPrevious(sheet.year);
-        }}
-        title="Add balance sheet for the previous year"
-      >
-        +
-      </button>
+      {/* Editable Field for Company Name */}
+      <div className="company-name">
+        <label>Company Name:</label>
+        <EditableField
+          value={sheet.name}
+          onChange={(newName) => {
+            const updatedSheet = { 
+              ...sheet, 
+              name: newName, 
+              identifier: `${newName}-${sheet.year}` 
+            };
+            console.log("Updated company name:", updatedSheet);
+            onUpdate(updatedSheet);
+          }}
+          fieldId={`sheet-${sheet.id}.name`}
+        />
+      </div>
+      {/* Card Header showing the identifier */}
       <div className="card-header" onClick={toggleCollapse}>
         <h3>
-          Balance Sheet –{' '}
-          <EditableField
-            value={sheet.year}
-            isYear
-            onChange={(newYear) => onUpdate({ ...sheet, year: newYear })}
-            fieldId={`sheet-${sheet.id}.year`}
-            error={hasError(`sheet-${sheet.id}.year`)}
-          />
+          Balance Sheet – {sheet.identifier || `${sheet.name}-${sheet.year}`}
         </h3>
         <i className={`fa ${collapsed ? 'fa-chevron-down' : 'fa-chevron-up'}`} />
       </div>

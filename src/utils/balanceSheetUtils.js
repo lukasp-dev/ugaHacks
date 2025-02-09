@@ -1,20 +1,22 @@
 // src/utils/balanceSheetUtils.js
-export const defaultBalanceSheet = (id, year) => ({
-  id,
+export const defaultBalanceSheet = (id, year, name = '') => ({
+  id: `sheet-${id}`,
+  name, // New field for the company name
   year,
+  // Identifier is computed by concatenating name and year. If name is empty, just use the year.
+  identifier: name ? `${name}-${year}` : `${year}`,
   assets: {
     current: {
       "Cash and cash equivalents": 0,
-      "Receivables, net": 0,
+      "Receivables, net": 0, // Note: Our default uses this key, but GPT returns "Accounts receivable, net"
       "Inventories": 0,
-      // Removed "Prepaid expenses & other" to avoid redundancy.
-      "Etc.": 0, // Extra row for any other current assets.
+      "Etc.": 0,
     },
     nonCurrent: {
       "Property and equipment, net": 0,
       "Goodwill": 0,
       "Long-term lease assets": 0,
-      "Etc.": 0, // Extra row for any other non-current assets.
+      "Etc.": 0,
     },
   },
   liabilities: {
@@ -22,13 +24,16 @@ export const defaultBalanceSheet = (id, year) => ({
       "Short-term borrowings": 0,
       "Accounts payable": 0,
       "Accrued liabilities": 0,
-      "Etc.": 0, // Extra row for any other current liabilities.
+      "Deferred revenue": 0,
+      "Commercial paper": 0,
+      "Term debt": 0,
+      "Etc.": 0,
     },
     longTerm: {
       "Long-term debt": 0,
       "Deferred income taxes": 0,
       "Finance & operating lease obligations": 0,
-      "Etc.": 0, // Extra row for any other long-term liabilities.
+      "Etc.": 0,
     },
   },
   equity: {
@@ -36,15 +41,14 @@ export const defaultBalanceSheet = (id, year) => ({
       "Common stock": 0,
       "Capital in excess of par value": 0,
       "Retained earnings": 0,
-      "Etc.": 0, // Extra row for any other common equity items.
+      "Etc.": 0,
     },
     comprehensive: {
       "Foreign currency translation adjustments": 0,
       "Unrealized gains/losses on securities": 0,
-      "Etc.": 0, // Extra row for any other comprehensive equity items.
+      "Etc.": 0,
     },
   },
-  // Extra sections
   income: 0,
   revenue: 0,
   profit: 0,
@@ -55,6 +59,3 @@ export const defaultBalanceSheet = (id, year) => ({
   depreciation: 0,
   amortization: 0,
 });
-
-export const sumValues = (obj) =>
-  Object.values(obj).reduce((sum, val) => sum + Number(val), 0);
