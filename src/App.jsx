@@ -39,7 +39,7 @@ const getInitialCompanies = () => [
 //
 // APP LAYOUT COMPONENT (includes header with Logout button)
 //
-const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible, handleLogout }) => {
+const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible, handleLogout, companies }) => {
   const location = useLocation();
 
   // Determine which section we’re in based on the pathname
@@ -90,7 +90,25 @@ const AppLayout = ({ currentUser, visualizationAccessible, summaryAccessible, ha
         </Link>
         {visualizationAccessible ? (
           <Link to="/visualization" style={{ textDecoration: 'none' }}>
-            <button style={enabledButtonStyle}>Visualization</button>
+            {visualizationAccessible ? (
+  <Link to="/visualization" style={{ textDecoration: 'none' }}>
+    <button 
+      style={enabledButtonStyle}
+      onClick={() => {
+        // Recalculate the flattened balance sheet array and store it
+        const allBalanceSheets = getAllBalanceSheets(companies);
+        localStorage.setItem("allBalanceSheets", JSON.stringify(allBalanceSheets));
+      }}
+    >
+      Visualization
+      </button>
+    </Link>
+  ) : (
+    <button style={disabledButtonStyle} disabled>
+      Visualization
+    </button>
+  )}
+
           </Link>
         ) : (
           <button style={disabledButtonStyle} disabled>
@@ -341,7 +359,7 @@ const App = () => {
             return company;
           }
           const newId = company.sheets.length
-            ? Math.max(...company.sheets.map((s) => s.id)) + 1
+            ? Math.max(...company.sheets.map((s) => Number(s.id.split('-')[1]))) + 1
             : 1;
           const newYear = company.sheets.length
             ? Math.max(...company.sheets.map((s) => s.year)) + 1
@@ -349,7 +367,7 @@ const App = () => {
           const newSheet = defaultBalanceSheet(newId, newYear, company.name);
           const updatedSheets = [...company.sheets, newSheet];
           updatedSheets.sort((a, b) => a.year - b.year);
-          return { ...company, sheets: updatedSheets };
+          return { ...company, sheets: updatedSheets};
         }
         return company;
       })
@@ -368,7 +386,7 @@ const App = () => {
       return;
     }
     const newId = currentCompany.sheets.length
-      ? Math.max(...currentCompany.sheets.map((s) => s.id)) + 1
+      ? Math.max(...currentCompany.sheets.map((s) => Number(s.id.split('-')[1]))) + 1
       : 1;
     const newSheet = defaultBalanceSheet(newId, newYear, currentCompany.name);
     const updatedSheets = [...currentCompany.sheets, newSheet];
@@ -392,7 +410,7 @@ const App = () => {
       return;
     }
     const newId = currentCompany.sheets.length
-      ? Math.max(...currentCompany.sheets.map((s) => s.id)) + 1
+    ? Math.max(...currentCompany.sheets.map((s) => Number(s.id.split('-')[1]))) + 1
       : 1;
     const newSheet = defaultBalanceSheet(newId, newYear, currentCompany.name);
     const updatedSheets = [...currentCompany.sheets, newSheet];
@@ -742,7 +760,8 @@ const App = () => {
                     visualizationAccessible={visualizationAccessible}
                     summaryAccessible={summaryAccessible}
                     handleLogout={handleLogout}
-                  />
+                    companies={companies}
+              />
                 }
               >
                 <Route path="/home" element={<LandingScreen />} />
