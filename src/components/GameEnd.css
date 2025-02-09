@@ -1,0 +1,273 @@
+/* GamePlay.css */
+
+/* Overall gameplay container */
+.gameplay-container {
+    max-width: 1200px;
+    margin: 2.5rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 1rem;
+  }
+  
+  /* Progress Bar */
+  .progress-bar {
+    position: relative;
+    width: 100%;
+    background-color: #e2e8f0; /* Light grey */
+    height: 0.75rem;
+    border-radius: 9999px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  
+  .progress-fill {
+    background: linear-gradient(to right, #63b3ed, #4299e1);
+    height: 100%;
+    border-radius: 9999px;
+  }
+  
+  /* Two-column layout (for calculation questions) */
+  .two-column {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  @media (min-width: 768px) {
+    .two-column {
+      flex-direction: row;
+    }
+  }
+  
+  /* Left column: Given Statement box */
+  .given-statement-box {
+    flex: 1;
+    padding: 1.5rem;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .given-statement-box h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1a202c;
+    margin-bottom: 1rem;
+  }
+  
+  .given-statement-box p {
+    color: #4a5568;
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+  
+  /* Right column (for question and controls) */
+  .right-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .question-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Calculation question input field */
+  .input-field {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.125rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Base button style */
+  .button {
+    display: inline-block;
+    padding: 1rem 1.5rem;
+    font-size: 1.125rem;
+    font-weight: 500;
+    text-align: center;
+    border-radius: 1rem;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Blue button (submit, next/finish, close review, end quiz) */
+  .btn-blue {
+    background-color: #4299e1;
+    color: #ffffff;
+  }
+  
+  .btn-blue:hover {
+    background-color: #3182ce;
+  }
+  
+  /* Yellow button (hint) */
+  .btn-yellow {
+    background-color: #ecc94b;
+    color: #ffffff;
+    border-radius: 9999px;
+    margin-bottom: 1rem;
+  }
+  
+  .btn-yellow:hover {
+    background-color: #d69e2e;
+  }
+  
+  /* Option buttons (for non-calculation questions) */
+  .option-button {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.125rem;
+    font-weight: 500;
+    text-align: center;
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    background-color: #f7fafc;
+    color: #1a202c;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    margin-bottom: 1rem;
+  }
+  
+  .option-button:hover {
+    background-color: #edf2f7;
+  }
+  
+  /* Correct/Incorrect styling for option buttons */
+  .correct {
+    background-color: #48bb78 !important;
+    color: #ffffff !important;
+    border-color: #48bb78 !important;
+  }
+  
+  .incorrect {
+    background-color: #f56565 !important;
+    color: #ffffff !important;
+    border-color: #f56565 !important;
+  }
+  
+  /* Explanation text */
+  .explanation {
+    margin-top: 1rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  .correct-text {
+    color: #48bb78;
+  }
+  
+  .incorrect-text {
+    color: #f56565;
+  }
+  
+  /* Hint text */
+  .hint-text {
+    font-size: 0.875rem;
+    color: #4a5568;
+    margin-bottom: 1rem;
+  }
+  
+  /* Next/Finish button */
+  .next-button {
+    margin-top: 2rem;
+    width: 100%;
+  }
+  
+  /* Single-column layout for non-calculation questions */
+  .single-column {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  /* Options container for non-calculation questions */
+  .options-container {
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Hide hint button in non-calculation questions */
+  .gameplay-container.single-column .btn-yellow {
+    display: none;
+  }
+  
+  /* --- Styles for the Game End page --- */
+  .game-end-container {
+    max-width: 800px;
+    margin: 4rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
+  }
+  
+  .review-section {
+    margin-top: 2rem;
+  }
+  
+  .review-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .review-item {
+    margin-bottom: 1rem;
+  }
+  
+  .review-button {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    background-color: #ffffff;
+    cursor: pointer;
+  }
+  
+  .review-button:hover {
+    background-color: #edf2f7;
+  }
+  
+  .review-modal {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 1rem;
+    background-color: #fafafa;
+    text-align: left;
+  }
+  
+  .review-modal h4 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    color: #1a202c;
+  }
+  
+  .review-explanation {
+    font-style: italic;
+    margin-top: 0.5rem;
+  }
+  
+  .close-review-button {
+    margin-top: 1rem;
+  }
+  
+  .end-quiz-button {
+    margin-top: 2rem;
+    width: 100%;
+  }
+  
