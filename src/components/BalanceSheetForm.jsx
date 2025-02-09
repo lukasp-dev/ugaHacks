@@ -1,4 +1,3 @@
-// src/components/BalanceSheetForm.jsx
 import React, { useState, useRef } from 'react';
 import merge from 'lodash.merge';
 import EditableField from './EditableField';
@@ -112,25 +111,25 @@ const BalanceSheetForm = ({
 
   return (
     <div className={`balance-sheet ${collapsed ? 'collapsed' : ''}`}>
-      {/* Editable Field for Company Name */}
-      <div className="company-name">
-        <label>Company Name:</label>
+      {/* Editable Field for Year (instead of Company Name) */}
+      <div className="sheet-year">
+        <label>Year:</label>
         <EditableField
-          value={sheet.name}
-          onChange={(newName) => {
+          value={sheet.year}
+          onChange={(newYear) => {
             const updatedSheet = { 
               ...sheet, 
-              name: newName, 
-              identifier: `${newName}-${sheet.year}` 
+              year: Number(newYear), 
+              identifier: `${sheet.name}-${newYear}`
             };
-            console.log("Updated company name:", updatedSheet);
+            console.log("Updated sheet year:", updatedSheet);
             onUpdate(updatedSheet);
           }}
-          inputType="text"
-          fieldId={`sheet-${sheet.id}.name`}
+          inputType="year"
+          fieldId={`sheet-${sheet.id}.year`}
         />
       </div>
-      {/* Card Header showing the year */}
+      {/* Card Header showing the balance sheet – clicking it toggles collapse */}
       <div className="card-header" onClick={toggleCollapse}>
         <h3>
           Balance Sheet – {sheet.year}
@@ -370,6 +369,17 @@ const BalanceSheetForm = ({
           </div>
         </div>
       </div>
+      {/* Previous Year Button */}
+      <button
+        className="add-year-button previous"
+        onClick={(e) => {
+          e.stopPropagation();
+          onAddPrevious(sheet.year);
+        }}
+        title="Add balance sheet for the previous year"
+      >
+        +
+      </button>
       {/* Next Year Button */}
       <button
         className="add-year-button next"
