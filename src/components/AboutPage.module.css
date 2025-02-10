@@ -1,15 +1,15 @@
-/* Overall container with a dark background */
+/* Main container with a dark background */
 .container {
     background: #121212;
     padding: 2rem;
     min-height: calc(100vh - 121px);
     display: flex;
-    flex-direction: column; /* Stacks content vertically */
+    flex-direction: column;
     align-items: center;
     justify-content: center;
   }
   
-  /* Content area with a slightly lighter dark background and soft shadow */
+  /* Content container */
   .content {
     display: flex;
     align-items: center;
@@ -23,20 +23,21 @@
     padding: 2rem;
   }
   
-  /* Text styles with white color */
   .text {
     flex: 1;
     color: #ffffff;
   }
   
+  /* Yellow header */
   .text h2 {
     margin-bottom: 1rem;
-    color: #f1c40f; /* Bright yellow for headings */
+    color: #f1c40f;
   }
   
+  /* Spacing */
   .text p,
   .text ul {
-    line-height: 1.4; /* Reduced line spacing */
+    line-height: 1.4;
     font-size: 1.1rem;
   }
   
@@ -44,32 +45,32 @@
     margin-left: 1.5rem;
   }
   
-  /* Styling for Truist Financial (changed from blue to orange) */
+  /* Truist Financial */
   .truist {
-    color: #e67e22; /* Orange */
+    color: #FFB668; /* Orange */
     font-weight: bold;
   }
   
-  /* Styling for the hackathon name */
+  /* UGAHacks X */
   .hackathon {
-    color: #27ae60; /* Vibrant green */
+    color: #1fd655;
     font-weight: bold;
   }
   
-  /* Styling for 'balance' & 'income' statements (lighter red) */
+  /* 'balance sheets', 'income statements' */
   .statement {
-    color: #e57373; /* Lighter red */
+    color: #e57373;
     font-weight: bold;
   }
   
-  /* Style for the dancing emoji replacing the image */
+  /* Emoji */
   .dancingEmoji {
     font-size: 8rem;
     display: block;
     text-align: center;
   }
   
-  /* Horizontal box for creator info */
+  /* Bottom text box with names */
   .creatorInfo {
     max-width: 1000px;
     width: 100%;
@@ -83,7 +84,7 @@
     text-align: center;
   }
   
-  /* Color the bolded text within the features list */
+  /* Feature names */
   .text ul li strong {
     color: #f1c40f; /* Bright yellow */
   }

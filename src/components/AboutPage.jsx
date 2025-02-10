@@ -1,9 +1,9 @@
 import React from 'react';
 import styles from './AboutPage.module.css';
 
-// Helper function to interpolate between two hex colors
+// Helper function to transition between two colors
 function interpolateColor(color1, color2, factor) {
-  // Remove the '#' and convert hex to integer components
+  // Extract integer components of hex number
   const c1 = {
     r: parseInt(color1.slice(1, 3), 16),
     g: parseInt(color1.slice(3, 5), 16),
@@ -15,7 +15,7 @@ function interpolateColor(color1, color2, factor) {
     b: parseInt(color2.slice(5, 7), 16),
   };
 
-  // Interpolate each color channel
+  // Interpolate between numbers
   const r = Math.round(c1.r + factor * (c2.r - c1.r));
   const g = Math.round(c1.g + factor * (c2.g - c1.g));
   const b = Math.round(c1.b + factor * (c2.b - c1.b));
@@ -29,13 +29,12 @@ function interpolateColor(color1, color2, factor) {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
-// A component that renders the given text, coloring each letter individually
+// Color each letter individually
 const GradientText = ({ text, startColor, endColor }) => {
-  // Split the text into individual characters
+
   return (
     <>
       {text.split('').map((char, index, arr) => {
-        // If the character is a space, return it unstyled
         if (char === ' ') {
           return ' ';
         }
@@ -60,15 +59,15 @@ const AboutPage = () => {
           <h2>About Us !!</h2>
           <p>
             Our project, pioneered by{' '}
-            <GradientText text="Jewook Park" startColor="#9b59b6" endColor="#8e44ad" />,{' '}
+            <GradientText text="Jewook Park" startColor="#7879FF" endColor="#A020F0" />,{' '}
             <GradientText text="Jiyoon Shin" startColor="#ff9ff3" endColor="#f368e0" />,{' '}
             <GradientText text="Yoonju Jung" startColor="#74b9ff" endColor="#0984e3" />, and{' '}
             <GradientText text="Matthew Lim" startColor="#55efc4" endColor="#00b894" />, started as a challenge posted by{' '}
             <span className={styles.truist}>Truist Financial</span> during the exciting{' '}
             <span className={styles.hackathon}>UGAHacks X</span> hackathon.
-            We set out to create a user-friendly, gamified tool that makes exploring key financial items –{' '}
-            <span className={styles.statement}>balance</span> &amp;{' '}
-            <span className={styles.statement}>income</span> statements – an easy learning experience!
+            We set out to create a user-friendly, gamified tool that makes exploring key financial items -{' '}
+            <span className={styles.statement}>balance sheets </span> &amp;{' '}
+            <span className={styles.statement}>income statements</span> - an easy learning experience!
           </p>
           <p>Check out some of its awesome features:</p>
           <ul>
